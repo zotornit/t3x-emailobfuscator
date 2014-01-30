@@ -109,7 +109,7 @@ class tx_emailobfuscator
 
         $pieces = self::cutToPieces(self::removeMailto($this->parameters['finalTagParts']['url']));
 
-        if (is_array($pieces)) {
+        if (is_array($pieces) && count($pieces) > 0) {
             /*
              * @ and last . replace when spamProtectEmailAddresses_lastDotSubst and/or spamProtectEmailAddresses_atSubst is set with typoscript
             */
@@ -165,16 +165,15 @@ class tx_emailobfuscator
 
     private static function buildJavascript($url, $link, $additionalATagParams = '')
     {
-        //var_dump($additionalATagParams );
-
-        return '<script language=\'JavaScript\' type=\'text/javascript\'>'
+        return '<script type=\'text/javascript\'>'
         . 'var el = document.getElementsByClassName(\'tx-emailobfuscator-noscript\');'
-        . 'for(var i = 0; i != el.length; i++) { el[i].style.display = \'none\';}'
+        . 'for(var i = 0; i != el.length; i++) { el[i].style.display = \'none\';};'
         . 'document.write(\'<a\' + \' href="\');'
         . $url
         . 'document.write(\'" ' . (($additionalATagParams != '') ? $additionalATagParams : '') . '>\');'
         . $link
-        . 'document.write(ecf+cef+cfe);</script>';
+        . 'document.write(ecf+cef+cfe);'
+        . '</script>';
     }
 
     /**
@@ -184,23 +183,25 @@ class tx_emailobfuscator
      */
     private static function convertToJSWriteDocument($string)
     {
-        $javaVarArray = array();
+        $usedRandomStrings = array();
         $javascriptDocumentWrite = 'document.write(';
         $javascriptVarDeclaration = '';
         $pieces = self::cutToPieces($string);
         $piecesCnt = count($pieces);
-        for ($i = 0; $i <= $piecesCnt - 1; $i++) {
+
+
+        for ($i = 1; $i < $piecesCnt; $i++) {
             $foundValidString = FALSE;
             while (!$foundValidString) {
                 $rLength = mt_rand(2, 6);
-                if (preg_match('/[a-zA-Z]{' . $rLength . '}/', $rstring = self::randomString($rLength))) {
+                if (preg_match('/[a-zA-Z]{' . $rLength . '}/', $randomString = self::randomString($rLength))) {
 
-                    $rstring = strtolower($rstring);
-                    if (!in_array($rstring, $javaVarArray)) {
-                        $javaVarArray[$i] = $rstring;
+                    $randomString = strtolower($randomString);
+                    if (!in_array($randomString, $usedRandomStrings)) {
+                        $usedRandomStrings[] = $randomString;
                         $foundValidString = TRUE;
-                        $javascriptVarDeclaration .= 'var ' . $rstring . '=\'' . $pieces[$i] . '\';';
-                        $javascriptDocumentWrite .= $rstring . '+';
+                        $javascriptVarDeclaration .= 'var ' . $randomString . '=\'' . $pieces[$i] . '\';';
+                        $javascriptDocumentWrite .= $randomString . '+';
                     }
                 }
             }
@@ -595,11 +596,6 @@ class tx_emailobfuscator
         $this->setParameter_finalTagParts_url($string);
     }
 
-//    private function getLinkURL()
-//    {
-//        return $this->linkURL;
-//    }
-
 
     private function getAdditionalATagParams()
     {
@@ -628,10 +624,6 @@ class tx_emailobfuscator
         $this->setObfuscation($this->getObfuscation() . $string);
     }
 
-//    private function prependToObfuscation($string)
-//    {
-//        $this->setObfuscation($string . $this->getObfuscation());
-//    }
 
     private function getObfuscation()
     {

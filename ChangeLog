@@ -1,3 +1,12 @@
+2014-01-30  Thomas Pronold  <tp@tpronold.de>
+
+    * Replaced <noscript> with <span>
+    * output is now valid HTML
+    * fixed code violations
+    * remove Extension enable/disable. Extension is enabled if installed.
+    * removed <noscript> option from extension settings.
+
+
 2012-10-10  Thomas Pronold  <tp@tpronold.de>
 
 	* fixed some bugs
@@ -9,8 +18,3 @@
 2012-09-02  Thomas Pronold  <tp@tpronold.de>
 
 	* extension release beta status
-
-
-
-	validation
-	noscript replaced
