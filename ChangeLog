@@ -5,6 +5,7 @@
     * fixed code violations
     * remove Extension enable/disable. Extension is enabled if installed.
     * removed <noscript> option from extension settings.
+    * extension no longer needs to be included static
 
 
 2012-10-10  Thomas Pronold  <tp@tpronold.de>

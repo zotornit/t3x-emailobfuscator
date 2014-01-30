@@ -270,7 +270,7 @@ class tx_emailobfuscator
         ) {
             $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
             foreach ($this->getAllowedSelectors() as $value) {
-                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . '\n';
+                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . PHP_EOL;
             }
         }
     }
