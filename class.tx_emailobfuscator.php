@@ -40,7 +40,7 @@ class tx_emailobfuscator
 
     private $hiddenParams = array('style="display:none;"', 'style="display: none;"', 'style=\'display:none;\'', 'style=\'display: none;\'');
 
-    static $reveredJSWords = array('abstract', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const',
+    private static $reveredJSWords = array('abstract', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const',
         'continue', 'default', 'delete', 'do', 'double', 'else', 'export', 'extends', 'false', 'final', 'finally',
         'float', 'for', 'function', 'goto', 'if', 'implements', 'in', 'instanceof', 'int', 'long', 'native', 'new',
         'null', 'package', 'private', 'protected', 'public', 'return', 'short', 'static', 'super', 'switch',
@@ -54,7 +54,7 @@ class tx_emailobfuscator
     const FINAL_TAG_CLOSER = '<a href="" style="display:none;">'; // necessary cause TYPO3 adds a closing </a> tag to the modified link at the end to prevent HTML open/closing tag erros.
 
 
-    function  __construct()
+    public function  __construct()
     {
         /*
          * Reads values from ext_conf_template.txt and saves them to $this->conf.
@@ -83,7 +83,6 @@ class tx_emailobfuscator
             $this->undoDefaultSpamProtection();
             $this->execObfuscation();
 
-
             $parameters = $this->parameters;
             $pObj = $this->pObj;
         }
@@ -93,14 +92,14 @@ class tx_emailobfuscator
 
 
     /*
-     * returns true if the given typolink is of TYPE mailto.
+     * returns TRUE if the given typolink is of TYPE mailto.
      */
     private function isMailtoTypolink()
     {
         if (isset($this->parameters['finalTagParts']['TYPE']) && $this->parameters['finalTagParts']['TYPE'] == 'mailto') {
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
 
@@ -114,14 +113,18 @@ class tx_emailobfuscator
             /*
              * @ and last . replace when spamProtectEmailAddresses_lastDotSubst and/or spamProtectEmailAddresses_atSubst is set with typoscript
             */
-            $lastDotSubst_done = false;
+            $lastDotSubst_done = FALSE;
             for ($i = count($pieces) - 1; $i >= 0; $i--) {
 
-                if (!$lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_lastDotSubst']) && strlen($this->globalConf['spamProtectEmailAddresses_lastDotSubst']) > 0 && preg_match('/\.{1}/', $pieces[$i])) {
+                if (!$lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_lastDotSubst'])
+                    && strlen($this->globalConf['spamProtectEmailAddresses_lastDotSubst']) > 0 && preg_match('/\.{1}/', $pieces[$i])
+                ) {
                     $pieces[$i] = str_replace('.', $this->globalConf['spamProtectEmailAddresses_lastDotSubst'], $pieces[$i]);
-                    $lastDotSubst_done = true;
+                    $lastDotSubst_done = TRUE;
                 }
-                if ($lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_atSubst']) && strlen($this->globalConf['spamProtectEmailAddresses_atSubst']) > 0 && preg_match('/@{1}/', $pieces[$i])) {
+                if ($lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_atSubst'])
+                    && strlen($this->globalConf['spamProtectEmailAddresses_atSubst']) > 0 && preg_match('/@{1}/', $pieces[$i])
+                ) {
                     $pieces[$i] = str_replace('@', $this->globalConf['spamProtectEmailAddresses_atSubst'], $pieces[$i]);
                     break;
                 }
@@ -185,8 +188,9 @@ class tx_emailobfuscator
         $javascriptDocumentWrite = 'document.write(';
         $javascriptVarDeclaration = '';
         $pieces = self::cutToPieces($string);
-        for ($i = 0; $i <= count($pieces) - 1; $i++) {
-            $foundValidString = false;
+        $piecesCnt = count($pieces);
+        for ($i = 0; $i <= $piecesCnt - 1; $i++) {
+            $foundValidString = FALSE;
             while (!$foundValidString) {
                 $rLength = mt_rand(2, 6);
                 if (preg_match('/[a-zA-Z]{' . $rLength . '}/', $rstring = self::randomString($rLength))) {
@@ -194,7 +198,7 @@ class tx_emailobfuscator
                     $rstring = strtolower($rstring);
                     if (!in_array($rstring, $javaVarArray)) {
                         $javaVarArray[$i] = $rstring;
-                        $foundValidString = true;
+                        $foundValidString = TRUE;
                         $javascriptVarDeclaration .= 'var ' . $rstring . '=\'' . $pieces[$i] . '\';';
                         $javascriptDocumentWrite .= $rstring . '+';
                     }
@@ -260,10 +264,12 @@ class tx_emailobfuscator
      */
     private function addAllowedSelectorsToCSSDefaultStyle()
     {
-        if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == '') {
+        if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'])
+            || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
+        ) {
             $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
             foreach ($this->getAllowedSelectors() as $k => $value) {
-                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . ' {display: none;}' . '\n';
+                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . '\n';
             }
         }
     }
@@ -371,7 +377,7 @@ class tx_emailobfuscator
      */
     public static function cutToPieces($string)
     {
-        $nmbPieces = floor(strlen($string) / 3);
+//        $nmbPieces = floor(strlen($string) / 3);
         $start = 0;
         do {
             $pieceLength = mt_rand(2, 4);
@@ -395,7 +401,8 @@ class tx_emailobfuscator
     {
         $string = trim($string);
         $result = '';
-        for ($i = 0; $i <= strlen($string) - 1; $i++) {
+        $stringLen = strlen($string);
+        for ($i = 0; $i <= $stringLen - 1; $i++) {
             $result .= self::unicodeToHTML(substr($string, $i, 1));
         }
         return $result;
@@ -419,7 +426,7 @@ class tx_emailobfuscator
              * make sure preg_match returns usefull result.
             */
             if (is_array($result) && isset($result[0]) && isset($result[1])) {
-                $tmpLinkURL = tx_emailobfuscator::decryptLinkURL($result[1], $this->globalConf['spamProtectEmailAddresses'] * -1);
+                $tmpLinkURL = self::decryptLinkURL($result[1], $this->globalConf['spamProtectEmailAddresses'] * -1);
                 $this->setLinkURL($tmpLinkURL);
                 $this->remove_lastDotSubst();
                 $this->remove_atSubst();
@@ -432,10 +439,12 @@ class tx_emailobfuscator
 
     private function isSpamProtectEmailAddressesEnabled()
     {
-        if (isset($this->globalConf['spamProtectEmailAddresses']) && is_numeric($this->globalConf['spamProtectEmailAddresses']) && $this->globalConf['spamProtectEmailAddresses'] != 0) {
-            return true;
+        if (isset($this->globalConf['spamProtectEmailAddresses']) && is_numeric($this->globalConf['spamProtectEmailAddresses'])
+            && $this->globalConf['spamProtectEmailAddresses'] != 0
+        ) {
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
 
@@ -540,13 +549,12 @@ class tx_emailobfuscator
         for ($i = 0; $i < $len; $i++) {
             $n = ord(substr($enc, $i, 1));
             if ($n >= 0x2B && $n <= 0x3A) {
-                $dec .= tx_emailobfuscator::decryptCharcode($n, 0x2B, 0x3A, $offset); // 0-9 . , - + / :
+                $dec .= self::decryptCharcode($n, 0x2B, 0x3A, $offset); // 0-9 . , - + / :
             } else if ($n >= 0x40 && $n <= 0x5A) {
-                $dec .= tx_emailobfuscator::decryptCharcode($n, 0x40, 0x5A, $offset); // A-Z @
+                $dec .= self::decryptCharcode($n, 0x40, 0x5A, $offset); // A-Z @
             } else if ($n >= 0x61 && $n <= 0x7A) {
-                $dec .= tx_emailobfuscator::decryptCharcode($n, 0x61, 0x7A, $offset); // a-z
+                $dec .= self::decryptCharcode($n, 0x61, 0x7A, $offset); // a-z
             } else {
-                //$dec += enc.charAt(i);
                 $dec .= substr($enc, $i, 1);
             }
         }
@@ -562,7 +570,7 @@ class tx_emailobfuscator
         if (isset($this->conf[$variable])) {
             return $this->conf[$variable];
         } else {
-            return false;
+            return FALSE;
         }
     }
 
