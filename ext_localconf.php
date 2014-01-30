@@ -29,4 +29,8 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_content.php']['typoLink_PostPr
 	= 'EXT:emailobfuscator/class.tx_emailobfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
 
 
+
+t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');
+
+
 ?>

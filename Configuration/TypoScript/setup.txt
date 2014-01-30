@@ -1,3 +1,0 @@
-
-
-plugin.tx_emailobfuscator._CSS_DEFAULT_STYLE >

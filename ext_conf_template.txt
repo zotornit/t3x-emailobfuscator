@@ -1,9 +1,3 @@
-# cat=basic/enable; type=boolean; label=Disable/Enable emailofuscator extension: For a better performance you should remove the extension instead of just disabling it. 
-enableEmailObfuscator = 0
-
-# cat=basic/enable; type=boolean; label=Add <noscript>: Add <noscript> alternative for browsers without javascript support.
-addNoscript = 1
-
 # cat=basic; type=string; label=Allowed HTML Tags: Use following HTML tags to create obfuscating trashcode. Depending on you HTML doctype you may have to add or remove some tags. An empty list will just use "span" (comma separated list)
 allowedTrashcodeHTMLTags = span,a,strong,em,abbr,code,i,b,sub,sup
 
@@ -11,4 +5,4 @@ allowedTrashcodeHTMLTags = span,a,strong,em,abbr,code,i,b,sub,sup
 allowedCSSSelectors = these,are,some,random,seperator,classnames
 
 # cat=basic; type=string; label=Prefix for allowedCSSSelectors: Use this option if you are not sure whether the allowedCSSSelectors may mess up existing CSS style. If you do not use any of the allowedCSSSelectors in your CSS you should leave this option empty and you will be fine.
-CSSSelectorPrefix = 
+CSSSelectorPrefix =
