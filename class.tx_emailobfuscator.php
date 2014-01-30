@@ -133,7 +133,7 @@ class tx_emailobfuscator
             /*
              * generate output string using some random encryption and obfuscation
             */
-            foreach ($pieces as $key => $value) {
+            foreach ($pieces as $value) {
                 $noJavascriptPart .= $this->randomObfuscation($value);
 
             }
@@ -179,7 +179,7 @@ class tx_emailobfuscator
 
     /**
      * converts a string to an javascript write document output
-     * @param unknown_type $string
+     * @param String $string
      * @return string
      */
     private static function convertToJSWriteDocument($string)
@@ -268,7 +268,7 @@ class tx_emailobfuscator
             || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
         ) {
             $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
-            foreach ($this->getAllowedSelectors() as $k => $value) {
+            foreach ($this->getAllowedSelectors() as $value) {
                 $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . '\n';
             }
         }
@@ -305,7 +305,7 @@ class tx_emailobfuscator
     {
         $newarr = array();
         if (is_array($arr)) {
-            foreach ($arr as $k => $value) {
+            foreach ($arr as $value) {
                 $newarr[] = $before . $value . $after;
             }
         } else {
@@ -333,7 +333,7 @@ class tx_emailobfuscator
 
 
     /**
-     * @return random hiddenParams
+     * @return String hiddenParams
      */
     private function getHiddenParam()
     {
@@ -377,8 +377,9 @@ class tx_emailobfuscator
      */
     public static function cutToPieces($string)
     {
-//        $nmbPieces = floor(strlen($string) / 3);
+        $result[] = array();
         $start = 0;
+
         do {
             $pieceLength = mt_rand(2, 4);
             $piece = substr($string, $start, $pieceLength);
@@ -387,6 +388,7 @@ class tx_emailobfuscator
                 $result[] = $piece;
             }
         } while ($piece != '');
+
         return $result;
     }
 
@@ -518,7 +520,7 @@ class tx_emailobfuscator
 
     /**
      *
-     * @param char $n char to decrypt
+     * @param int $n char to decrypt
      * @param int $start
      * @param int $end
      * @param int $offset encryption offset, set by spamProtectEmailAddresses 10,-10
@@ -593,10 +595,10 @@ class tx_emailobfuscator
         $this->setParameter_finalTagParts_url($string);
     }
 
-    private function getLinkURL()
-    {
-        return $this->linkURL;
-    }
+//    private function getLinkURL()
+//    {
+//        return $this->linkURL;
+//    }
 
 
     private function getAdditionalATagParams()
@@ -626,15 +628,13 @@ class tx_emailobfuscator
         $this->setObfuscation($this->getObfuscation() . $string);
     }
 
-    private function prependToObfuscation($string)
-    {
-        $this->setObfuscation($string . $this->getObfuscation());
-    }
+//    private function prependToObfuscation($string)
+//    {
+//        $this->setObfuscation($string . $this->getObfuscation());
+//    }
 
     private function getObfuscation()
     {
         return $this->obfuscation;
     }
 }
-
-?>
