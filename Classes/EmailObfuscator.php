@@ -23,14 +23,18 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_emailobfuscator
-{
+class Tx_Emailobfuscator extends EmailObfuscator {
+}
+
+class EmailObfuscator {
 
     private $conf; // Extension conf
     private $globalConf; // $GLOBALS['TSFE']->config['config']
 
-    private $parameters; // Method parameter
-    private $pObj; // Method parameter
+//    private $parameters; // Method parameter
+//    private $pObj; // Method parameter
+
+    private $content;
 
     private $linkText; // Link Text between <a href..> and </a>
     private $linkURL; // URL in href=""
@@ -47,15 +51,12 @@ class tx_emailobfuscator
         'synchronized', 'this', 'throw', 'throws', 'transient', 'true', 'try', 'typeof', 'undefined', 'var',
         'void', 'while', 'with');
 
-
     const TYPO3_JS_ENCRYPTION_PATTERN = 'javascript:linkTo_UnCryptMailto\(\'(.*)\'\);'; // Pattern to find encrypted email
     const TYPO3_DEFAULT_ENCRYPTION_PATTERN = 'mailto:([\w\.@]*)'; // Pattern to find encrypted email
 
     const FINAL_TAG_CLOSER = '<a href="" style="display:none;">'; // necessary cause TYPO3 adds a closing </a> tag to the modified link at the end to prevent HTML open/closing tag erros.
 
-
-    public function  __construct()
-    {
+    public function  __construct() {
         /*
          * Reads values from ext_conf_template.txt and saves them to $this->conf.
         */
@@ -63,48 +64,78 @@ class tx_emailobfuscator
         $this->globalConf = $GLOBALS['TSFE']->config['config'];
     }
 
-
     /**
      * Initiate the obfuscator.
      *
      * @param Array $parameters
-     * @param tslib_cObj $pObj
+     * @param tslib_fe $pObj
      */
-    public function initEmailObfuscator(Array &$parameters, tslib_cObj &$pObj)
-    {
-        $this->parameters = $parameters;
-        $this->pObj = $pObj;
+    public function initEmailObfuscator(Array &$parameters, tslib_fe &$pObj) {
 
-        if ($this->isMailtoTypolink()) {
+        $this->content = $parameters['pObj']->content;
 
-            $this->setLinkText($this->parameters['linktxt']);
-            $this->setupHiddenParams();
-            $this->setAdditionalATagParams();
-            $this->undoDefaultSpamProtection();
-            $this->execObfuscation();
+        // find alle mailto: matches
+        preg_match_all('#<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i', $this->content, $matches);
 
-            $parameters = $this->parameters;
-            $pObj = $this->pObj;
-        }
-        unset($this->parameters);
-        unset($this->pObj);
+        var_dump($matches);
+
+//        foreach ($matches[0] as $emailLink) {
+//
+//            preg_match_all('#<a(.+)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*)>(.*?)</a>#i', $emailLink, $moreMatches);
+//
+//
+//            // preHref
+//            var_dump($moreMatches[1]);
+//
+//            // href
+//            var_dump($moreMatches[2]);
+//
+//            // pposthref
+//            var_dump($moreMatches[3]);
+//
+//            // linkText
+//            var_dump($moreMatches[4]);
+//
+//
+//
+//        }
+
+        $this->content = str_replace('Email@emaillink.de', time() . 'aaa', $this->content);
+
+        $parameters['pObj']->content = $this->content;
+
+//        $this->parameters = $parameters;
+//        $this->pObj = $pObj;
+
+//        var_dump($this->pObj);
+//    var_dump($parameters['pObj']);
+
+//        if ($this->isMailtoTypolink()) {
+//
+//            $this->setLinkText($this->parameters['linktxt']);
+//            $this->setupHiddenParams();
+//            $this->setAdditionalATagParams();
+//            $this->undoDefaultSpamProtection();
+//            $this->execObfuscation();
+//
+//            $parameters = $this->parameters;
+//            $pObj = $this->pObj;
+//        }
+//        unset($this->parameters);
+//        unset($this->pObj);
     }
-
 
     /*
      * returns TRUE if the given typolink is of TYPE mailto.
      */
-    private function isMailtoTypolink()
-    {
+    private function isMailtoTypolink() {
         if (isset($this->parameters['finalTagParts']['TYPE']) && $this->parameters['finalTagParts']['TYPE'] == 'mailto') {
             return TRUE;
         }
         return FALSE;
     }
 
-
-    private function execNonJSObfuscation()
-    {
+    private function execNonJSObfuscation() {
         $noJavascriptPart = '<span class="tx-emailobfuscator-noscript">';
 
         $pieces = self::cutToPieces(self::removeMailto($this->parameters['finalTagParts']['url']));
@@ -143,9 +174,7 @@ class tx_emailobfuscator
         $this->appendToObfuscation($noJavascriptPart);
     }
 
-
-    private function execJSObfuscation()
-    {
+    private function execJSObfuscation() {
         $javascriptURLPart = self::convertToJSWriteDocument($this->parameters['finalTagParts']['url']);
         $javascriptLinkPart = self::convertToJSWriteDocument($this->parameters['linktxt']);
         $this->appendToObfuscation(self::buildJavascript($javascriptURLPart, $javascriptLinkPart, $this->getAdditionalATagParams()));
@@ -154,8 +183,7 @@ class tx_emailobfuscator
     /*
      * executes the obfusctaion for given typolink
     */
-    private function execObfuscation()
-    {
+    private function execObfuscation() {
         $this->execNonJSObfuscation();
         $this->execJSObfuscation();
         $this->setParameter_finalTag($this->getObfuscation() . self::FINAL_TAG_CLOSER);
@@ -163,8 +191,7 @@ class tx_emailobfuscator
         $this->setParameter_linktxt('');
     }
 
-    private static function buildJavascript($url, $link, $additionalATagParams = '')
-    {
+    private static function buildJavascript($url, $link, $additionalATagParams = '') {
         return '<script type=\'text/javascript\'>'
         . 'var el = document.getElementsByClassName(\'tx-emailobfuscator-noscript\');'
         . 'for(var i = 0; i != el.length; i++) { el[i].style.display = \'none\';};'
@@ -181,14 +208,12 @@ class tx_emailobfuscator
      * @param String $string
      * @return string
      */
-    private static function convertToJSWriteDocument($string)
-    {
+    private static function convertToJSWriteDocument($string) {
         $usedRandomStrings = array();
         $javascriptDocumentWrite = 'document.write(';
         $javascriptVarDeclaration = '';
         $pieces = self::cutToPieces($string);
         $piecesCnt = count($pieces);
-
 
         for ($i = 1; $i < $piecesCnt; $i++) {
             $foundValidString = FALSE;
@@ -211,13 +236,11 @@ class tx_emailobfuscator
         return $javascriptVarDeclaration . $javascriptDocumentWrite;
     }
 
-
     /**
      * obfuscates an email address with some random methods
      * I am not very happy with this code. Change it later. NYI
      */
-    public function randomObfuscation($string)
-    {
+    public function randomObfuscation($string) {
         $mode = mt_rand(1, 100);
 
         /*
@@ -243,28 +266,23 @@ class tx_emailobfuscator
      * @param string $string
      * @return String
      */
-    public static function wrapWithSpan($string)
-    {
+    public static function wrapWithSpan($string) {
         return '<span>' . $string . '</span>';
     }
-
 
     /**
      * setup all availible hiddenParams and sets the CSS
      */
-    private function setupHiddenParams()
-    {
+    private function setupHiddenParams() {
 
         $this->addHiddenParams(self::wrapArrayItems('class="', '"', $this->getAllowedSelectors()));
         $this->addAllowedSelectorsToCSSDefaultStyle();
     }
 
-
     /**
      * adds all allowed CSS selectors to the _CSS_DEFAULT_STYLE
      */
-    private function addAllowedSelectorsToCSSDefaultStyle()
-    {
+    private function addAllowedSelectorsToCSSDefaultStyle() {
         if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'])
             || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
         ) {
@@ -275,9 +293,7 @@ class tx_emailobfuscator
         }
     }
 
-
-    private function addHiddenParams($params)
-    {
+    private function addHiddenParams($params) {
         if (is_array($params)) {
             foreach ($params as $value) {
                 $this->hiddenParams[] = $value;
@@ -285,12 +301,10 @@ class tx_emailobfuscator
         }
     }
 
-
-    private function getAllowedSelectors()
-    {
+    private function getAllowedSelectors() {
         $allowedSelectors = array();
         if ($this->getConfVar('allowedCSSSelectors')) {
-            $allowedSelectorsTemp = explode(",", $this->getConfVar('allowedCSSSelectors'));
+            $allowedSelectorsTemp = explode(',', $this->getConfVar('allowedCSSSelectors'));
 
             foreach ($allowedSelectorsTemp as $value) {
                 $value = trim($value);
@@ -302,8 +316,7 @@ class tx_emailobfuscator
         return $allowedSelectors;
     }
 
-    private static function wrapArrayItems($before, $after, $arr)
-    {
+    private static function wrapArrayItems($before, $after, $arr) {
         $newarr = array();
         if (is_array($arr)) {
             foreach ($arr as $value) {
@@ -315,14 +328,12 @@ class tx_emailobfuscator
         return $newarr;
     }
 
-
     /**
      * creates random invisible trashcode
      *
      * @return string
      */
-    private function createInvisibleTrashcode()
-    {
+    private function createInvisibleTrashcode() {
         $trashTags = explode(',', trim($this->conf['allowedTrashcodeHTMLTags']));
         if (is_array($trashTags)) {
             $usedTag = trim($trashTags[(mt_rand(0, count($trashTags) - 1))]);
@@ -332,12 +343,10 @@ class tx_emailobfuscator
         return '<' . $usedTag . ' ' . $this->getHiddenParam() . ' >' . self::randomString(mt_rand(2, 5)) . '</' . $usedTag . '>';
     }
 
-
     /**
      * @return String hiddenParams
      */
-    private function getHiddenParam()
-    {
+    private function getHiddenParam() {
         return $this->hiddenParams[(mt_rand(0, count($this->hiddenParams) - 1))];
     }
 
@@ -347,8 +356,7 @@ class tx_emailobfuscator
      * @param string $length
      * @return string
      */
-    public static function randomString($length)
-    {
+    public static function randomString($length) {
         if (!($length < 22 && $length > 0)) {
             $length = 22;
         }
@@ -359,14 +367,12 @@ class tx_emailobfuscator
         return $randomString;
     }
 
-
     /**
      * removes the 'mailto:' part in a string
      * @param String $string
      * @return String
      */
-    public static function removeMailto($string)
-    {
+    public static function removeMailto($string) {
         return str_replace('mailto:', '', $string);
     }
 
@@ -376,8 +382,7 @@ class tx_emailobfuscator
      * @param String $string
      * @return Array
      */
-    public static function cutToPieces($string)
-    {
+    public static function cutToPieces($string) {
         $result[] = array();
         $start = 0;
 
@@ -393,15 +398,13 @@ class tx_emailobfuscator
         return $result;
     }
 
-
     /**
      * encrypts a string to unicode HTML chars
      *
      * @param String $string
      * @return String $result
      */
-    private static function encryptUnicode($string)
-    {
+    private static function encryptUnicode($string) {
         $string = trim($string);
         $result = '';
         $stringLen = strlen($string);
@@ -411,17 +414,14 @@ class tx_emailobfuscator
         return $result;
     }
 
-
-    private static function unicodeToHTML($code)
-    {
+    private static function unicodeToHTML($code) {
         return '&#' . ord($code) . ';';
     }
 
     /**
      * Undoes already parsed typolink for TYPE 'mailto' to get the default value for link and linktext.
      */
-    private function undoDefaultSpamProtection()
-    {
+    private function undoDefaultSpamProtection() {
         if ($this->isSpamProtectEmailAddressesEnabled()) {
 
             $result = $this->matchFinalTag();
@@ -440,8 +440,7 @@ class tx_emailobfuscator
 
     }
 
-    private function isSpamProtectEmailAddressesEnabled()
-    {
+    private function isSpamProtectEmailAddressesEnabled() {
         if (isset($this->globalConf['spamProtectEmailAddresses']) && is_numeric($this->globalConf['spamProtectEmailAddresses'])
             && $this->globalConf['spamProtectEmailAddresses'] != 0
         ) {
@@ -450,14 +449,12 @@ class tx_emailobfuscator
         return FALSE;
     }
 
-
     /**
      * simple preg_match for $this->parameters['finalTag']
      *
      * @return Array $result
      */
-    private function matchFinalTag()
-    {
+    private function matchFinalTag() {
         if (isset($this->globalConf['spamProtectEmailAddresses']) && $this->globalConf['spamProtectEmailAddresses'] != 0) {
             preg_match('/' . self::TYPO3_JS_ENCRYPTION_PATTERN . '/', $this->parameters['finalTag'], $result);
         } else {
@@ -472,8 +469,7 @@ class tx_emailobfuscator
      * sets $this->parameters['finalTag']     *
      *
      */
-    private function setParameter_finalTag($value = '')
-    {
+    private function setParameter_finalTag($value = '') {
         if ($value == '') {
             $this->parameters['finalTag'] = '<a href="' . $this->parameters['finalTagParts']['url'] . '" ' . $this->getAdditionalATagParams() . ' >';
         } else {
@@ -486,8 +482,7 @@ class tx_emailobfuscator
      *
      * @param String $value
      */
-    private function setParameter_finalTagParts_url($value)
-    {
+    private function setParameter_finalTagParts_url($value) {
         $this->parameters['finalTagParts']['url'] = trim($value);
         $this->pObj->lastTypoLinkUrl = trim($value);
         $this->setParameter_finalTag();
@@ -498,24 +493,21 @@ class tx_emailobfuscator
      *
      * @param String $value
      */
-    private function setParameter_linktxt($value)
-    {
+    private function setParameter_linktxt($value) {
         $this->parameters['linktxt'] = $value;
     }
 
     /*
      * replaces spamProtectEmailAddresses_lastDotSubst with .
     */
-    private function remove_lastDotSubst()
-    {
+    private function remove_lastDotSubst() {
         $this->setLinkText(str_replace($this->globalConf['spamProtectEmailAddresses_lastDotSubst'], '.', $this->getLinkText()));
     }
 
     /*
      * replaces spamProtectEmailAddresses_atSubst with @
     */
-    private function remove_atSubst()
-    {
+    private function remove_atSubst() {
         $this->setLinkText(str_replace($this->globalConf['spamProtectEmailAddresses_atSubst'], '@', $this->getLinkText()));
     }
 
@@ -527,8 +519,7 @@ class tx_emailobfuscator
      * @param int $offset encryption offset, set by spamProtectEmailAddresses 10,-10
      * @return string
      */
-    private static function decryptCharcode($n, $start, $end, $offset)
-    {
+    private static function decryptCharcode($n, $start, $end, $offset) {
         $n = $n + $offset;
         if ($offset > 0 && $n > $end) {
             $n = $start + ($n - $end - 1);
@@ -545,8 +536,7 @@ class tx_emailobfuscator
      * @param int $offset encryption offset, set by spamProtectEmailAddresses 10,-10
      * @return string
      */
-    private static function decryptLinkURL($enc, $offset)
-    {
+    private static function decryptLinkURL($enc, $offset) {
         $dec = '';
         $len = strlen($enc);
         for ($i = 0; $i < $len; $i++) {
@@ -568,8 +558,7 @@ class tx_emailobfuscator
      * Setters & Getters
     */
 
-    private function getConfVar($variable)
-    {
+    private function getConfVar($variable) {
         if (isset($this->conf[$variable])) {
             return $this->conf[$variable];
         } else {
@@ -577,33 +566,25 @@ class tx_emailobfuscator
         }
     }
 
-
-    private function setLinkText($string)
-    {
+    private function setLinkText($string) {
         $this->linkText = $string;
         $this->setParameter_linktxt($string);
     }
 
-    private function getLinkText()
-    {
+    private function getLinkText() {
         return $this->linkText;
     }
 
-
-    private function setLinkURL($string)
-    {
+    private function setLinkURL($string) {
         $this->linkURL = trim($string);
         $this->setParameter_finalTagParts_url($string);
     }
 
-
-    private function getAdditionalATagParams()
-    {
+    private function getAdditionalATagParams() {
         return $this->additionalATagParams;
     }
 
-    private function setAdditionalATagParams()
-    {
+    private function setAdditionalATagParams() {
         $result = $this->matchFinalTag();
         if (is_array($result) && isset($result[0]) && isset($result[1])) {
             $tmp = str_replace($result[0], '', $this->parameters['finalTag']);
@@ -612,21 +593,16 @@ class tx_emailobfuscator
         }
     }
 
-
-    private function setObfuscation($string)
-    {
+    private function setObfuscation($string) {
         $this->obfuscation = $string;
     }
 
-    private function appendToObfuscation($string)
-    {
+    private function appendToObfuscation($string) {
 
         $this->setObfuscation($this->getObfuscation() . $string);
     }
 
-
-    private function getObfuscation()
-    {
+    private function getObfuscation() {
         return $this->obfuscation;
     }
 }

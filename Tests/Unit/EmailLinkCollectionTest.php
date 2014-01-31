@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,16 +23,37 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-//$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-cached']['tx_emailobfuscator']
-//    = 'EXT:emailobfuscator/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
+/**
+ * Test case.
+ *
+ * @package TPRONOLD
+ * @subpackage tx_emailobfuscator
+ *
+ * @author Thomas Pronold <tp@tpronold.de>
+ */
 
-$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['tx_emailobfuscator']
-    = 'EXT:emailobfuscator/Classes/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
+require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EmailLinkCollection.php');
 
-//$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['tx_emailobfuscator']
-//    = 'EXT:emailobfuscator/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
+class EmailLinkCollectionTest extends Tx_Phpunit_TestCase {
 
-t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');
+    protected $fixture;
 
+    public function setUp() {
+        $this->fixture = new EmailLinkCollection();
+    }
+
+    public function tearDown() {
+        unset($this->fixture);
+    }
+
+//    /**
+//     * @test
+//     */
+//    public function addEmailLink() {
+//        $linkToAdd = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
+//        $this->fixture->addEmailLink();
+//    }
+
+}
 
 ?>
