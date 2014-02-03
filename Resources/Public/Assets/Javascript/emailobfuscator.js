@@ -3,10 +3,7 @@
  *
  */
 
-var cfe = '>';
-var ecf = '</';
-var cef = 'a';
-
+var endATag = '</a>';
 
 function removeNoScriptHTML() {
     var el = document.getElementsByClassName('tx-emailobfuscator-noscript');

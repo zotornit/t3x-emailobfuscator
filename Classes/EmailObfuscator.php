@@ -23,6 +23,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+
+
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EmailLink.php');
 
@@ -54,6 +56,9 @@ class EmailObfuscator {
         $parameters['pObj']->content = $this->content;
 
     }
+
+
+
 }
 
 class EmailObfuscatorAlt {
@@ -309,19 +314,19 @@ class EmailObfuscatorAlt {
         $this->addAllowedSelectorsToCSSDefaultStyle();
     }
 
-    /**
-     * adds all allowed CSS selectors to the _CSS_DEFAULT_STYLE
-     */
-    private function addAllowedSelectorsToCSSDefaultStyle() {
-        if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'])
-            || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
-        ) {
-            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
-            foreach ($this->getAllowedSelectors() as $value) {
-                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . PHP_EOL;
-            }
-        }
-    }
+//    /**
+//     * adds all allowed CSS selectors to the _CSS_DEFAULT_STYLE
+//     */
+//    private function addAllowedSelectorsToCSSDefaultStyle() {
+//        if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'])
+//            || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
+//        ) {
+//            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
+//            foreach ($this->getAllowedSelectors() as $value) {
+//                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . PHP_EOL;
+//            }
+//        }
+//    }
 
     private function addHiddenParams($params) {
         if (is_array($params)) {

@@ -25,7 +25,7 @@
 
 mb_internal_encoding("UTF-8");
 
-class Tx_Obfuscator_EmailLink extends Obfuscator {
+class Tx_Emailobfuscator_Obfuscator extends Obfuscator {
 
 }
 
@@ -33,6 +33,11 @@ class Obfuscator {
 
     private $emailLink;
     private $obfuscatedLink = '';
+
+    private static $allowedTrashcodeHTMLTags = array();
+    private static $allowedTrashcodeHTMLTagsParsed = false;
+
+    private static $hiddenCSSHiddenSelectorsAdded = false;
 
     private static $conf = array();
     private static $globalConf = array();
@@ -43,7 +48,8 @@ class Obfuscator {
         'float', 'for', 'function', 'goto', 'if', 'implements', 'in', 'instanceof', 'int', 'long', 'native', 'new',
         'null', 'package', 'private', 'protected', 'public', 'return', 'short', 'static', 'super', 'switch',
         'synchronized', 'this', 'throw', 'throws', 'transient', 'true', 'try', 'typeof', 'undefined', 'var',
-        'void', 'while', 'with');
+        'void', 'while', 'with',
+    );
 
     public function __construct($emailLink) {
 
@@ -53,8 +59,43 @@ class Obfuscator {
         if (!$emailLink instanceof EmailLink) {
             throw new InvalidArgumentException('Argument must be instance of EmailLink');
         }
-
         $this->emailLink = $emailLink;
+
+        $this->parseAllowedTrashcodeHTMLTags();
+
+        $this->addCSSHiddenSelectors();
+
+    }
+
+    private function addCSSHiddenSelectors() {
+        if (!self::$hiddenCSSHiddenSelectorsAdded) {
+            $cssParams = AddCSS::getallowedCSSSelectors();
+
+            if (count($cssParams) > 0) {
+                foreach ($cssParams as $cssSelector) {
+                    self::$hiddenParams[] = 'class="' . $cssSelector . '"';
+                }
+            }
+            self::$hiddenCSSHiddenSelectorsAdded = true;
+        }
+    }
+
+    private function parseAllowedTrashcodeHTMLTags() {
+        /**
+         * check for valid userinput on self::$conf['allowedTrashcodeHTMLTags'])
+         */
+        if (!self::$allowedTrashcodeHTMLTagsParsed) {
+            $userInputParts = explode(',', self::$conf['allowedTrashcodeHTMLTags']);
+
+            if (is_array($userInputParts)) {
+                foreach ($userInputParts as $input) {
+                    if (preg_match('/^[a-z]{1,}$/i', $input)) {
+                        self::$allowedTrashcodeHTMLTags[] = mb_strtolower($input);
+                    }
+                }
+                self::$allowedTrashcodeHTMLTagsParsed = true;
+            }
+        }
     }
 
     public function obfuscate() {
@@ -72,13 +113,11 @@ class Obfuscator {
 
     private static function buildJavascript($url, $link, $additionalATagParams = '') {
         return '<script type=\'text/javascript\'>'
-        . ''
-        . ''
         . 'document.write(\'<a\' + \' href="\');'
         . $url
         . 'document.write(\'" ' . (($additionalATagParams != '') ? str_replace('\'', '\\\'', $additionalATagParams) : '') . '>\');'
         . $link
-        . 'document.write(ecf+cef+cfe);'
+        . 'document.write(endATag);'
         . '</script>';
     }
 
@@ -97,11 +136,10 @@ class Obfuscator {
         for ($i = 0; $i < $piecesCnt; $i++) {
             $foundValidString = FALSE;
             while (!$foundValidString) {
-                $rLength = mt_rand(2, 6);
+                $rLength = mt_rand(2, 4);
                 $randomString = self::randomString($rLength);
-                if (preg_match('/[a-zA-Z]{' . $rLength . '}/', $randomString)) {
+                if (preg_match('/^[a-z]{' . $rLength . '}$/', $randomString)) {
 
-                    $randomString = strtolower($randomString);
                     if (!in_array($randomString, $usedRandomStrings)) {
                         $usedRandomStrings[] = $randomString;
                         $foundValidString = TRUE;
@@ -120,37 +158,52 @@ class Obfuscator {
     public function obfuscateNonJavaScript() {
         $noJavascriptPart = '<span class="tx-emailobfuscator-noscript">';
 
-        $pieces = self::cutToPieces($this->emailLink->getEmail());
+        $piecesEmailLink = self::cutToPieces($this->emailLink->getEmail());
+        $piecesLinkText = self::cutToPieces($this->emailLink->getLinkText());
 
-        if (is_array($pieces) && count($pieces) > 0) {
+        if (mb_strtolower($this->emailLink->getEmail()) != mb_strtolower($this->emailLink->getLinkText())) {
+            if (is_array($piecesLinkText) && count($piecesLinkText) > 0) {
+                foreach ($piecesLinkText as $linkTextPart) {
+                    $noJavascriptPart .= $this->randomObfuscation($linkTextPart);
+                }
+            }
+            $noJavascriptPart .= ' (';
+        }
+
+        if (is_array($piecesEmailLink) && count($piecesEmailLink) > 0) {
             /*
              * @ and last . replace when spamProtectEmailAddresses_lastDotSubst and/or spamProtectEmailAddresses_atSubst is set with typoscript
             */
-            $lastDotSubst_done = FALSE;
-            for ($i = count($pieces) - 1; $i >= 0; $i--) {
-
-                if (!$lastDotSubst_done && isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst'])
-                    && strlen(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) > 0 && preg_match('/\.{1}/', $pieces[$i])
-                ) {
-                    $pieces[$i] = str_replace('.', self::$globalConf['spamProtectEmailAddresses_lastDotSubst'], $pieces[$i]);
-                    $lastDotSubst_done = TRUE;
-                }
-                if ($lastDotSubst_done && isset(self::$globalConf['spamProtectEmailAddresses_atSubst'])
-                    && strlen(self::$globalConf['spamProtectEmailAddresses_atSubst']) > 0 && preg_match('/@{1}/', $pieces[$i])
-                ) {
-                    $pieces[$i] = str_replace('@', self::$globalConf['spamProtectEmailAddresses_atSubst'], $pieces[$i]);
-                    break;
-                }
-            }
+//            $lastDotSubst_done = FALSE;
+//            for ($i = count($piecesEmailLink) - 1; $i >= 0; $i--) {
+//
+//                if (!$lastDotSubst_done && isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst'])
+//                    && strlen(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) > 0 && preg_match('/\.{1}/', $piecesEmailLink[$i])
+//                ) {
+//                    $piecesEmailLink[$i] = str_replace('.', self::$globalConf['spamProtectEmailAddresses_lastDotSubst'], $piecesEmailLink[$i]);
+//                    $lastDotSubst_done = TRUE;
+//                }
+//                if ($lastDotSubst_done && isset(self::$globalConf['spamProtectEmailAddresses_atSubst'])
+//                    && strlen(self::$globalConf['spamProtectEmailAddresses_atSubst']) > 0 && preg_match('/@{1}/', $piecesEmailLink[$i])
+//                ) {
+//                    $piecesEmailLink[$i] = str_replace('@', self::$globalConf['spamProtectEmailAddresses_atSubst'], $piecesEmailLink[$i]);
+//                    break;
+//                }
+//            }
 
             /*
              * generate output string using some random encryption and obfuscation
             */
-            foreach ($pieces as $value) {
-                $noJavascriptPart .= $this->randomObfuscation($value);
-
+            foreach ($piecesEmailLink as $linkTextPart) {
+                $noJavascriptPart .= $this->randomObfuscation($linkTextPart);
             }
         }
+
+        if (mb_strtolower($this->emailLink->getEmail()) != mb_strtolower($this->emailLink->getLinkText())) {
+
+            $noJavascriptPart .= ')';
+        }
+
         $noJavascriptPart .= '</span>';
 
         return $noJavascriptPart;
@@ -186,19 +239,19 @@ class Obfuscator {
     private static function randomObfuscation($string) {
         $mode = mt_rand(1, 100);
 
-        /*
+        /**
          * no encryption, leave it blank 15% of time
-        */
+         */
         if ($mode <= 15) {
             return self::wrapWithSpan($string);
-        } /*
-		 * just unicode encryption, 25% of time
-		*/
+        } /**
+         * just unicode encryption, 25% of time
+         */
         elseif ($mode > 15 && $mode <= 40) {
             return self::wrapWithSpan(self::encryptUnicode($string));
-        } /*
-		 * just unicode encryption + additional inivisible trashcode, 45% of time
-		*/
+        } /**
+         * just unicode encryption + additional inivisible trashcode, 60% of time
+         */
         else {
             return self::wrapWithSpan(self::encryptUnicode($string)) . self::createInvisibleTrashcode();
         }
@@ -222,9 +275,9 @@ class Obfuscator {
     private static function encryptUnicode($string) {
         $string = trim($string);
         $result = '';
-        $stringLen = strlen($string);
+        $stringLen = mb_strlen($string);
         for ($i = 0; $i <= $stringLen - 1; $i++) {
-            $result .= self::unicodeToHTML(substr($string, $i, 1));
+            $result .= self::unicodeToHTML(mb_substr($string, $i, 1));
         }
         return $result;
     }
@@ -235,9 +288,9 @@ class Obfuscator {
      * @return string
      */
     private static function createInvisibleTrashcode() {
-        $trashTags = explode(',', trim(self::$conf['allowedTrashcodeHTMLTags']));
-        if (is_array($trashTags)) {
-            $usedTag = trim($trashTags[(mt_rand(0, count($trashTags) - 1))]);
+        if (count(self::$allowedTrashcodeHTMLTags) > 0) {
+            $usedTag = trim(self::$allowedTrashcodeHTMLTags[(mt_rand(0, count(self::$allowedTrashcodeHTMLTags) - 1))]);
+
         } else {
             $usedTag = 'span';
         }
