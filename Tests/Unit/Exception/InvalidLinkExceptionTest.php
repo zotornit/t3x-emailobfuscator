@@ -10,7 +10,7 @@ class InvalidLinkExceptionTest extends Tx_Phpunit_TestCase {
      *
      * @throws InvalidLinkException
      */
-    public function exceptionCanBeThrown() {
+    public function exceptionCanBeThrownTest() {
         throw new InvalidLinkException('some message', 12345);
     }
 }

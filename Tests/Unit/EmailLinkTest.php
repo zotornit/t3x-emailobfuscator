@@ -50,7 +50,7 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function setLink() {
+    public function setLinkTest() {
         $linkToSet = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
         $this->fixture->setLink($linkToSet);
     }
@@ -58,35 +58,35 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function getPreHREF() {
+    public function getPreHREFTest() {
         $this->assertEquals('', $this->fixture->getPreHREF());
     }
 
     /**
      * @test
      */
-    public function getPostHREF() {
+    public function getPostHREFTest() {
         $this->assertEquals('', $this->fixture->getPostHREF());
     }
 
     /**
      * @test
      */
-    public function getEmail() {
+    public function getEmailTest() {
         $this->assertEquals('tp@tpronold.de', $this->fixture->getEmail());
     }
 
     /**
      * @test
      */
-    public function getLinkText() {
+    public function getLinkTextTest() {
         $this->assertEquals('tp@tpronold.de', $this->fixture->getLinkText());
     }
 
     /**
      * @test
      */
-    public function getParsingOfComplicatedLink() {
+    public function getParsingOfComplicatedLinkTest() {
         $this->fixture->setLink('<a id="em1"   onclick="javascript:alert(\'ALERT\');"  href="mailto:tp@tpronold.de"'
         . 'style="border:1px solid red;" class="email">Tom does some extension  </a>');
 
@@ -103,7 +103,7 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
      *
      * @throws InvalidLinkException
      */
-    public function setInvalidLinkThrowsException() {
+    public function setInvalidLinkThrowsExceptionTest() {
         $linkToSet = '';
         $this->fixture->setLink($linkToSet);
     }
@@ -111,7 +111,7 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function validateValidLink() {
+    public function validateValidLinkTest() {
         $linkToValidate = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
         $this->assertTrue(EmailLink::validate($linkToValidate));
     }
@@ -119,7 +119,7 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function validateInvalidLinks() {
+    public function validateInvalidLinksTest() {
         $linksToValidate[] = ' <a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
         $linksToValidate[] = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a> ';
         $linksToValidate[] = 'a<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';

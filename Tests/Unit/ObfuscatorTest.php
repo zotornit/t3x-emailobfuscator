@@ -65,10 +65,6 @@ class ObfuscatorTest extends Tx_Phpunit_TestCase {
         $string = 'mv0a43u5q0n8510n8501v501801841ß23840134oi1hf4o1u501284502180ß1';
         $result = Obfuscator::cutToPieces($string);
 
-//        $this->assertEquals(print_r($result, true), $string);
-
-//        print_r($result);
-
         foreach ($result as $value) {
             if (mb_strlen($value) >= 1 && mb_strlen($value) <= 4) {
                 $this->assertTrue(TRUE);

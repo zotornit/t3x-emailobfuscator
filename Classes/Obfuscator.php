@@ -31,13 +31,6 @@ class Tx_Obfuscator_EmailLink extends Obfuscator {
 
 class Obfuscator {
 
-//    public function obfuscate() {
-//        // non javascriptStuff:
-//        $this->generateNonJSObfuscation();
-//
-//        return $this->obfuscatedLink;
-//    }
-
     private $emailLink;
     private $obfuscatedLink = '';
 
