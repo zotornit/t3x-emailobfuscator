@@ -25,6 +25,7 @@
 
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EmailLink.php');
+require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EncryptedEmailLink.php');
 
 class Tx_Emailobfuscator extends EmailObfuscator {
 }
@@ -37,12 +38,8 @@ class EmailObfuscator {
     private static $conf = array();
 
     const EMAILLINK_PATTERN = '#<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i';
-
     const DEFAULT_TYPO3_ENCRYPT_PATTERN = '#<a(.+?)href=[\'"]javascript:linkTo_UnCryptMailto\(\'(.{1,})\'\);[\'"](.*?)>(.*?)</a>#i';
 
-    /**
-     * Initiate the EmailObfuscator.
-     */
     public function init(&$parameters) {
 
         $this->content = $parameters['pObj']->content;
@@ -54,47 +51,47 @@ class EmailObfuscator {
         preg_match_all(self::EMAILLINK_PATTERN, $this->content, $matches);
 
         foreach ($matches[0] as $link) {
-            $obfuscator = new Obfuscator(new EmailLink($link));
-            $this->content = str_replace($link, $obfuscator->obfuscate(), $this->content);
+            $obf = new Obfuscator(new EmailLink($link));
+            $this->content = str_replace($link, $obf->obfuscate(), $this->content);
         }
 
         // find all default spam protected links
         if (self::isSpamProtectEmailAddressesEnabled() && self::isOverwriteSpamProtectEmailAddressesEnabled()) {
-            if (!isset(self::$globalConf['spamProtectEmailAddresses_atSubst']) || self::$globalConf['spamProtectEmailAddresses_atSubst'] == '') {
-                self::$globalConf['spamProtectEmailAddresses_atSubst'] = '(at)';
-            }
-
-            if (!isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) || self::$globalConf['spamProtectEmailAddresses_lastDotSubst'] == '') {
-                self::$globalConf['spamProtectEmailAddresses_lastDotSubst'] = '.';
-            }
 
             preg_match_all(self::DEFAULT_TYPO3_ENCRYPT_PATTERN, $this->content, $matches);
 
-            $count = 0;
             foreach ($matches[0] as $link) {
-
-                $newLink = str_replace(
-                    array(
-                        'javascript:linkTo_UnCryptMailto(\'' . $matches[2][$count] . '\');',
-                        self::$globalConf['spamProtectEmailAddresses_atSubst'],
-                        self::$globalConf['spamProtectEmailAddresses_lastDotSubst']
-                    ),
-                    array(
-                        self::decryptLink($matches[2][$count], self::$globalConf['spamProtectEmailAddresses']),
-                        '@',
-                        '.'
-                    ),
-                    $link
+                $obf = new Obfuscator(
+                    new EncryptedEmailLink(
+                        $link,
+                        $this->getspamProtectEmailAddresses(),
+                        $this->getSpamProtectEmailAddresses_atSubst(),
+                        $this->getSpamProtectEmailAddresses_lastDotSubst()
+                    )
                 );
-//                var_dump($link);
-                $obfuscator = new Obfuscator(new EmailLink($newLink));
-                $this->content = str_replace($link, $obfuscator->obfuscate(), $this->content);
-                $count++;
+                $this->content = str_replace($link, $obf->obfuscate(), $this->content);
             }
-
         }
 
         $parameters['pObj']->content = $this->content;
+    }
+
+    private function getSpamProtectEmailAddresses_atSubst() {
+        if (!isset(self::$globalConf['spamProtectEmailAddresses_atSubst']) || self::$globalConf['spamProtectEmailAddresses_atSubst'] == '') {
+            return '(at)';
+        }
+        return self::$globalConf['spamProtectEmailAddresses_atSubst'];
+    }
+
+    private function getSpamProtectEmailAddresses_lastDotSubst() {
+        if (!isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) || self::$globalConf['spamProtectEmailAddresses_lastDotSubst'] == '') {
+            return '.';
+        }
+        return self::$globalConf['spamProtectEmailAddresses_lastDotSubst'];
+    }
+
+    private function getspamProtectEmailAddresses() {
+        return self::$globalConf['spamProtectEmailAddresses'];
     }
 
     private static function isOverwriteSpamProtectEmailAddressesEnabled() {
@@ -114,52 +111,6 @@ class EmailObfuscator {
         }
 
         return FALSE;
-    }
-
-    /**
-     *
-     * @param int $n char to decrypt
-     * @param int $start
-     * @param int $end
-     * @param int $offset encryption offset, set by spamProtectEmailAddresses 10,-10
-     * @return string
-     */
-    private static function decryptCharcode($n, $start, $end, $offset) {
-        $n = $n + $offset;
-        if ($offset > 0 && $n > $end) {
-            $n = $start + ($n - $end - 1);
-        } else if ($offset < 0 && $n < $start) {
-            $n = $end - ($start - $n - 1);
-        }
-
-        return chr($n);
-    }
-
-    /**
-     * decrypts an string to get original email link
-     *
-     * @param string $enc encrypted emailadress link
-     * @param int $offset encryption offset, set by spamProtectEmailAddresses 10,-10
-     * @return string
-     */
-    private static function decryptLink($enc, $offset) {
-        $offset *= -1;
-        $dec = '';
-        $len = strlen($enc);
-        for ($i = 0; $i < $len; $i++) {
-            $n = ord(substr($enc, $i, 1));
-            if ($n >= 0x2B && $n <= 0x3A) {
-                $dec .= self::decryptCharcode($n, 0x2B, 0x3A, $offset); // 0-9 . , - + / :
-            } else if ($n >= 0x40 && $n <= 0x5A) {
-                $dec .= self::decryptCharcode($n, 0x40, 0x5A, $offset); // A-Z @
-            } else if ($n >= 0x61 && $n <= 0x7A) {
-                $dec .= self::decryptCharcode($n, 0x61, 0x7A, $offset); // a-z
-            } else {
-                $dec .= substr($enc, $i, 1);
-            }
-        }
-
-        return $dec;
     }
 
 }

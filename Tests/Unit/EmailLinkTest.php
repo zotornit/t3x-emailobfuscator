@@ -23,15 +23,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/**
- * Test case.
- *
- * @package TPRONOLD
- * @subpackage tx_emailobfuscator
- *
- * @author Thomas Pronold <tp@tpronold.de>
- */
-
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EmailLink.php');
 
 class EmailLinkTest extends Tx_Phpunit_TestCase {
@@ -111,15 +102,15 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function validateValidLinkTest() {
+    public function validLinkTest() {
         $linkToValidate = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
-        $this->assertTrue(EmailLink::validate($linkToValidate));
+        $this->assertEquals(1, preg_match($this->fixture->getEmailLinkPattern(), $linkToValidate));
     }
 
     /**
      * @test
      */
-    public function validateInvalidLinksTest() {
+    public function invalidLinksTest() {
         $linksToValidate[] = ' <a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
         $linksToValidate[] = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a> ';
         $linksToValidate[] = 'a<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
@@ -129,7 +120,7 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
         $linksToValidate[] = '<a href="mailto:tp@tpronold">tp@tpronold.de</a>';
 
         foreach ($linksToValidate as $link) {
-            $this->assertFalse(EmailLink::validate($link));
+            $this->assertEquals(0, preg_match($this->fixture->getEmailLinkPattern(), $link));
         }
     }
 

@@ -28,13 +28,13 @@ class Tx_EmailObfuscator_EmailLink extends EmailLink {
 }
 
 class EmailLink {
-    private $link = '';
-    private $preHREF = '';
-    private $email = '';
-    private $postHREF = '';
-    private $linkText = '';
+    protected $link = '';
+    protected $preHREF = '';
+    protected $email = '';
+    protected $postHREF = '';
+    protected $linkText = '';
 
-    const EMAILLINK_PATTERN = '/^<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)<\/a>$/i';
+    protected $emailLinkPattern = '/^<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)<\/a>$/i';
 
     public function setLink($link) {
         if ($this->isValid($link)) {
@@ -49,21 +49,22 @@ class EmailLink {
         $this->setLink($link);
     }
 
-    public static function validate($link) {
-        if (preg_match(self::EMAILLINK_PATTERN, $link)) {
+//    protected function validate($link) {
+//        if (preg_match($this->getEmailLinkPattern(), $link)) {
+//            return TRUE;
+//        }
+//        return FALSE;
+//    }
+
+    protected function isValid($link) {
+        if (preg_match($this->getEmailLinkPattern(), $link)) {
             return TRUE;
         }
-
         return FALSE;
     }
 
-    private function isValid($link) {
-        return self::validate($link);
-    }
-
-    private function parse() {
-        preg_match_all(self::EMAILLINK_PATTERN, $this->link, $matches);
-
+    protected function parse() {
+        preg_match_all($this->getEmailLinkPattern(), $this->link, $matches);
         $this->preHREF = trim($matches[1][0]);
         $this->email = trim($matches[2][0]);
         $this->postHREF = trim($matches[3][0]);
@@ -84,6 +85,10 @@ class EmailLink {
 
     public function getLinkText() {
         return $this->linkText;
+    }
+
+    public function getEmailLinkPattern() {
+        return $this->emailLinkPattern;
     }
 
 }
