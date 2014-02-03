@@ -76,5 +76,3 @@ class ObfuscatorTest extends Tx_Phpunit_TestCase {
     }
 
 }
-
-?>

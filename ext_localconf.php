@@ -29,12 +29,3 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_
     = 'EXT:emailobfuscator/Classes/Service/CSSService.php:&Tx_Emailobfuscator_Service_CSSService->addAllowedSelectorsToCSSDefaultStyle';
 
 t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');
-
-
-
-
-
-//TODO logging
-//TODO default spam dedection
-
-

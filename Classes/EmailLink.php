@@ -53,6 +53,7 @@ class EmailLink {
         if (preg_match(self::EMAILLINK_PATTERN, $link)) {
             return TRUE;
         }
+
         return FALSE;
     }
 
@@ -86,6 +87,3 @@ class EmailLink {
     }
 
 }
-
-
-

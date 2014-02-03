@@ -134,5 +134,3 @@ class EmailLinkTest extends Tx_Phpunit_TestCase {
     }
 
 }
-
-?>

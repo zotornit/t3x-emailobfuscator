@@ -350,6 +350,3 @@ class Obfuscator {
         return $randomString;
     }
 }
-
-
-
