@@ -25,17 +25,17 @@
 $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['tx_emailobfuscator']
     = 'EXT:emailobfuscator/Classes/EmailObfuscator.php:&tx_emailobfuscator->init';
 
-$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess']['tx_emailobfuscator']
-    = 'EXT:emailobfuscator/Classes/Service/AddCSS.php:&Tx_Emailobfuscator_Service_AddCSS->init';
+$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_emailobfuscator']
+    = 'EXT:emailobfuscator/Classes/Service/CSSService.php:&Tx_Emailobfuscator_Service_CSSService->addAllowedSelectorsToCSSDefaultStyle';
 
 t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');
 
 
 
 
-//TODO userwörter ingaben prüfen, bzw ignoreren falls javascript reserved word.
+
 //TODO logging
 //TODO default spam dedection
 
-//TODO den ganzen conf sachen adden, userdefinded css usw
+
 //TODO XHTML

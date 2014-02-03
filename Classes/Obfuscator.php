@@ -25,6 +25,8 @@
 
 mb_internal_encoding("UTF-8");
 
+require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Service/CSSService.php');
+
 class Tx_Emailobfuscator_Obfuscator extends Obfuscator {
 
 }
@@ -69,7 +71,7 @@ class Obfuscator {
 
     private function addCSSHiddenSelectors() {
         if (!self::$hiddenCSSHiddenSelectorsAdded) {
-            $cssParams = AddCSS::getallowedCSSSelectors();
+            $cssParams = CSSService::getAllowedCSSSelectors();
 
             if (count($cssParams) > 0) {
                 foreach ($cssParams as $cssSelector) {
@@ -273,7 +275,6 @@ class Obfuscator {
      * @return String $result
      */
     private static function encryptUnicode($string) {
-        $string = trim($string);
         $result = '';
         $stringLen = mb_strlen($string);
         for ($i = 0; $i <= $stringLen - 1; $i++) {
@@ -305,7 +306,8 @@ class Obfuscator {
     }
 
     private static function unicodeToHTML($code) {
-        return '&#' . ord($code) . ';';
+        list(, $ord) = unpack('N', mb_convert_encoding($code, 'UCS-4BE', 'UTF-8'));
+        return '&#' . ($ord) . ';';
     }
 
     /**
