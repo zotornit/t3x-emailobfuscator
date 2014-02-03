@@ -37,9 +37,9 @@ class Obfuscator {
     private $obfuscatedLink = '';
 
     private static $allowedTrashcodeHTMLTags = array();
-    private static $allowedTrashcodeHTMLTagsParsed = false;
+    private static $allowedTrashcodeHTMLTagsParsed = FALSE;
 
-    private static $hiddenCSSHiddenSelectorsAdded = false;
+    private static $hiddenCSSHiddenSelectorsAdded = FALSE;
 
     private static $conf = array();
     private static $globalConf = array();
@@ -78,7 +78,7 @@ class Obfuscator {
                     self::$hiddenParams[] = 'class="' . $cssSelector . '"';
                 }
             }
-            self::$hiddenCSSHiddenSelectorsAdded = true;
+            self::$hiddenCSSHiddenSelectorsAdded = TRUE;
         }
     }
 
@@ -95,7 +95,7 @@ class Obfuscator {
                         self::$allowedTrashcodeHTMLTags[] = mb_strtolower($input);
                     }
                 }
-                self::$allowedTrashcodeHTMLTagsParsed = true;
+                self::$allowedTrashcodeHTMLTagsParsed = TRUE;
             }
         }
     }
@@ -104,23 +104,37 @@ class Obfuscator {
         // non javascriptStuff:
         $this->obfuscatedLink .= $this->obfuscateNonJavaScript();
         $this->obfuscatedLink .= $this->obfuscateJavascript();
+
         return $this->obfuscatedLink;
     }
 
     private function obfuscateJavascript() {
         $javascriptURLPart = self::convertToJSWriteDocument('mailto:' . $this->emailLink->getEmail());
         $javascriptLinkPart = self::convertToJSWriteDocument($this->emailLink->getLinkText());
+
         return self::buildJavascript($javascriptURLPart, $javascriptLinkPart, $this->emailLink->getPreHREF() . ' ' . $this->emailLink->getPostHREF());
     }
 
     private static function buildJavascript($url, $link, $additionalATagParams = '') {
+        self::isXHTMLEnabled();
+
         return '<script type=\'text/javascript\'>'
+        . ((self::isXHTMLEnabled()) ? '/* <![CDATA[ */ ' : '')
         . 'document.write(\'<a\' + \' href="\');'
         . $url
         . 'document.write(\'" ' . (($additionalATagParams != '') ? str_replace('\'', '\\\'', $additionalATagParams) : '') . '>\');'
         . $link
         . 'document.write(endATag);'
+        . ((self::isXHTMLEnabled()) ? '/* ]]> */' : '')
         . '</script>';
+    }
+
+    private static function isXHTMLEnabled() {
+        if (preg_match('/^xhtml_[a-z0-9]{1,}$/i', self::$globalConf['doctype'])) {
+            return TRUE;
+        }
+
+        return FALSE;
     }
 
     /**
@@ -154,6 +168,7 @@ class Obfuscator {
         }
 
         $javascriptDocumentWrite .= '\'\');';
+
         return $javascriptVarDeclaration . $javascriptDocumentWrite;
     }
 
@@ -280,6 +295,7 @@ class Obfuscator {
         for ($i = 0; $i <= $stringLen - 1; $i++) {
             $result .= self::unicodeToHTML(mb_substr($string, $i, 1));
         }
+
         return $result;
     }
 
@@ -295,6 +311,7 @@ class Obfuscator {
         } else {
             $usedTag = 'span';
         }
+
         return '<' . $usedTag . ' ' . self::getHiddenParam() . ' >' . self::randomString(mt_rand(2, 5)) . '</' . $usedTag . '>';
     }
 
@@ -307,6 +324,7 @@ class Obfuscator {
 
     private static function unicodeToHTML($code) {
         list(, $ord) = unpack('N', mb_convert_encoding($code, 'UCS-4BE', 'UTF-8'));
+
         return '&#' . ($ord) . ';';
     }
 
@@ -328,6 +346,7 @@ class Obfuscator {
             $randomString = strtolower($randomString);
 
         } while (in_array($randomString, self::$reservedJSWords));
+
         return $randomString;
     }
 }

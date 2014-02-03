@@ -12,5 +12,3 @@ function removeNoScriptHTML() {
     }
 }
 window.onload = removeNoScriptHTML;
-
-

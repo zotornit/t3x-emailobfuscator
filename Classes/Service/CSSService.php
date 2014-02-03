@@ -6,9 +6,9 @@ class Tx_Emailobfuscator_Service_CSSService extends CSSService {
 class CSSService {
 
     private static $allowedCSSSelectors = array();
-    private static $parseAllowedCSSSelectorsParsed = false;
+    private static $parseAllowedCSSSelectorsParsed = FALSE;
 
-    private static $allowedCSssSelectorsAdded = false;
+    private static $allowedCSssSelectorsAdded = FALSE;
 
     private static $conf = array();
 
@@ -35,7 +35,7 @@ class CSSService {
                         '.' . $cssSelector . ' {display: none;}' . PHP_EOL;
                 }
             }
-            self::$allowedCSssSelectorsAdded = true;
+            self::$allowedCSssSelectorsAdded = TRUE;
         }
     }
 
@@ -46,7 +46,6 @@ class CSSService {
         if (!self::$parseAllowedCSSSelectorsParsed) {
             $userInputParts = explode(',', self::$conf['allowedCSSSelectors']);
             $CSSSelectorPrefix = trim(self::$conf['CSSSelectorPrefix']);
-//            var_dump($CSSSelectorPrefix);
             if (is_array($userInputParts)) {
                 foreach ($userInputParts as $input) {
                     if ($CSSSelectorPrefix == '') {
@@ -59,7 +58,7 @@ class CSSService {
                         self::$allowedCSSSelectors[] = mb_strtolower($tempSelector);
                     }
                 }
-                self::$parseAllowedCSSSelectorsParsed = true;
+                self::$parseAllowedCSSSelectorsParsed = TRUE;
             }
         }
     }

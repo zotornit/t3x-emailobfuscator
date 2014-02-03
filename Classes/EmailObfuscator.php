@@ -23,8 +23,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-
-
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EmailLink.php');
 
@@ -57,19 +55,13 @@ class EmailObfuscator {
 
     }
 
-
-
 }
 
 class EmailObfuscatorAlt {
 
-    private $conf; // Extension conf
-    private $globalConf; // $GLOBALS['TSFE']->config['config']
+    private $conf;
+    private $globalConf;
 
-//    private $parameters; // Method parameter
-//    private $pObj; // Method parameter
-
-    private $content;
 
     private $linkText; // Link Text between <a href..> and </a>
     private $linkURL; // URL in href=""
@@ -99,257 +91,6 @@ class EmailObfuscatorAlt {
         $this->globalConf = $GLOBALS['TSFE']->config['config'];
     }
 
-    /**
-     * Initiate the obfuscator.
-     *
-     * @param Array $parameters
-     * @param tslib_fe $pObj
-     */
-//    public function initEmailObfuscator(Array &$parameters, tslib_fe &$pObj) {
-//
-//        $this->content = $parameters['pObj']->content;
-//
-//        // find alle mailto: matches
-//        preg_match_all('#<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i', $this->content, $matches);
-//
-//        var_dump($matches);
-//
-////        foreach ($matches[0] as $emailLink) {
-////
-////            preg_match_all('#<a(.+)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*)>(.*?)</a>#i', $emailLink, $moreMatches);
-////
-////
-////            // preHref
-////            var_dump($moreMatches[1]);
-////
-////            // href
-////            var_dump($moreMatches[2]);
-////
-////            // pposthref
-////            var_dump($moreMatches[3]);
-////
-////            // linkText
-////            var_dump($moreMatches[4]);
-////
-////
-////
-////        }
-//
-//        $this->content = str_replace('Email@emaillink.de', time() . 'aaa', $this->content);
-//
-//        $parameters['pObj']->content = $this->content;
-
-//        $this->parameters = $parameters;
-//        $this->pObj = $pObj;
-
-//        var_dump($this->pObj);
-//    var_dump($parameters['pObj']);
-
-//        if ($this->isMailtoTypolink()) {
-//
-//            $this->setLinkText($this->parameters['linktxt']);
-//            $this->setupHiddenParams();
-//            $this->setAdditionalATagParams();
-//            $this->undoDefaultSpamProtection();
-//            $this->execObfuscation();
-//
-//            $parameters = $this->parameters;
-//            $pObj = $this->pObj;
-//        }
-//        unset($this->parameters);
-//        unset($this->pObj);
-//    }
-
-    /*
-     * returns TRUE if the given typolink is of TYPE mailto.
-     */
-    private function isMailtoTypolink() {
-        if (isset($this->parameters['finalTagParts']['TYPE']) && $this->parameters['finalTagParts']['TYPE'] == 'mailto') {
-            return TRUE;
-        }
-        return FALSE;
-    }
-
-//    private function execNonJSObfuscation() {
-//        $noJavascriptPart = '<span class="tx-emailobfuscator-noscript">';
-//
-//        $pieces = self::cutToPieces(self::removeMailto($this->parameters['finalTagParts']['url']));
-//
-//        if (is_array($pieces) && count($pieces) > 0) {
-//            /*
-//             * @ and last . replace when spamProtectEmailAddresses_lastDotSubst and/or spamProtectEmailAddresses_atSubst is set with typoscript
-//            */
-//            $lastDotSubst_done = FALSE;
-//            for ($i = count($pieces) - 1; $i >= 0; $i--) {
-//
-//                if (!$lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_lastDotSubst'])
-//                    && strlen($this->globalConf['spamProtectEmailAddresses_lastDotSubst']) > 0 && preg_match('/\.{1}/', $pieces[$i])
-//                ) {
-//                    $pieces[$i] = str_replace('.', $this->globalConf['spamProtectEmailAddresses_lastDotSubst'], $pieces[$i]);
-//                    $lastDotSubst_done = TRUE;
-//                }
-//                if ($lastDotSubst_done && isset($this->globalConf['spamProtectEmailAddresses_atSubst'])
-//                    && strlen($this->globalConf['spamProtectEmailAddresses_atSubst']) > 0 && preg_match('/@{1}/', $pieces[$i])
-//                ) {
-//                    $pieces[$i] = str_replace('@', $this->globalConf['spamProtectEmailAddresses_atSubst'], $pieces[$i]);
-//                    break;
-//                }
-//            }
-//
-//            /*
-//             * generate output string using some random encryption and obfuscation
-//            */
-//            foreach ($pieces as $value) {
-//                $noJavascriptPart .= $this->randomObfuscation($value);
-//
-//            }
-//        }
-//        $noJavascriptPart .= '</span>';
-//
-//        $this->appendToObfuscation($noJavascriptPart);
-//    }
-
-    private function execJSObfuscation() {
-        $javascriptURLPart = self::convertToJSWriteDocument($this->parameters['finalTagParts']['url']);
-        $javascriptLinkPart = self::convertToJSWriteDocument($this->parameters['linktxt']);
-        $this->appendToObfuscation(self::buildJavascript($javascriptURLPart, $javascriptLinkPart, $this->getAdditionalATagParams()));
-    }
-
-    /*
-     * executes the obfusctaion for given typolink
-    */
-    private function execObfuscation() {
-//        $this->execNonJSObfuscation();
-//        $this->execJSObfuscation();
-        $this->setParameter_finalTag($this->getObfuscation() . self::FINAL_TAG_CLOSER);
-        $this->setObfuscation('');
-        $this->setParameter_linktxt('');
-    }
-
-//    private static function buildJavascript($url, $link, $additionalATagParams = '') {
-//        return '<script type=\'text/javascript\'>'
-//        . 'var el = document.getElementsByClassName(\'tx-emailobfuscator-noscript\');'
-//        . 'for(var i = 0; i != el.length; i++) { el[i].style.display = \'none\';};'
-//        . 'document.write(\'<a\' + \' href="\');'
-//        . $url
-//        . 'document.write(\'" ' . (($additionalATagParams != '') ? $additionalATagParams : '') . '>\');'
-//        . $link
-//        . 'document.write(ecf+cef+cfe);'
-//        . '</script>';
-//    }
-
-//    /**
-//     * converts a string to an javascript write document output
-//     * @param String $string
-//     * @return string
-//     */
-//    private static function convertToJSWriteDocument($string) {
-//        $usedRandomStrings = array();
-//        $javascriptDocumentWrite = 'document.write(';
-//        $javascriptVarDeclaration = '';
-//        $pieces = self::cutToPieces($string);
-//        $piecesCnt = count($pieces);
-//
-//        for ($i = 1; $i < $piecesCnt; $i++) {
-//            $foundValidString = FALSE;
-//            while (!$foundValidString) {
-//                $rLength = mt_rand(2, 6);
-//                if (preg_match('/[a-zA-Z]{' . $rLength . '}/', $randomString = self::randomString($rLength))) {
-//
-//                    $randomString = strtolower($randomString);
-//                    if (!in_array($randomString, $usedRandomStrings)) {
-//                        $usedRandomStrings[] = $randomString;
-//                        $foundValidString = TRUE;
-//                        $javascriptVarDeclaration .= 'var ' . $randomString . '=\'' . $pieces[$i] . '\';';
-//                        $javascriptDocumentWrite .= $randomString . '+';
-//                    }
-//                }
-//            }
-//        }
-//
-//        $javascriptDocumentWrite .= '\'\');';
-//        return $javascriptVarDeclaration . $javascriptDocumentWrite;
-//    }
-
-//    /**
-//     * obfuscates an email address with some random methods
-//     * I am not very happy with this code. Change it later. NYI
-//     */
-//    public function randomObfuscation($string) {
-//        $mode = mt_rand(1, 100);
-//
-//        /*
-//         * no encryption, leave it blank 15% of time
-//        */
-//        if ($mode <= 15) {
-//            return self::wrapWithSpan($string);
-//        } /*
-//		 * just unicode encryption, 25% of time
-//		*/
-//        elseif ($mode > 15 && $mode <= 40) {
-//            return self::wrapWithSpan(self::encryptUnicode($string));
-//        } /*
-//		 * just unicode encryption + additional inivisible trashcode, 45% of time
-//		*/
-//        else {
-//            return self::wrapWithSpan(self::encryptUnicode($string)) . $this->createInvisibleTrashcode();
-//        }
-//    }
-
-//    /**
-//     * wraps a string with span tag
-//     * @param string $string
-//     * @return String
-//     */
-//    public static function wrapWithSpan($string) {
-//        return '<span>' . $string . '</span>';
-//    }
-
-    /**
-     * setup all availible hiddenParams and sets the CSS
-     */
-    private function setupHiddenParams() {
-
-        $this->addHiddenParams(self::wrapArrayItems('class="', '"', $this->getAllowedSelectors()));
-        $this->addAllowedSelectorsToCSSDefaultStyle();
-    }
-
-//    /**
-//     * adds all allowed CSS selectors to the _CSS_DEFAULT_STYLE
-//     */
-//    private function addAllowedSelectorsToCSSDefaultStyle() {
-//        if (!isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'])
-//            || trim($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE']) == ''
-//        ) {
-//            $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] = '';
-//            foreach ($this->getAllowedSelectors() as $value) {
-//                $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_emailobfuscator.']['_CSS_DEFAULT_STYLE'] .= '.' . $value . '{display: none;}' . PHP_EOL;
-//            }
-//        }
-//    }
-
-    private function addHiddenParams($params) {
-        if (is_array($params)) {
-            foreach ($params as $value) {
-                $this->hiddenParams[] = $value;
-            }
-        }
-    }
-
-    private function getAllowedSelectors() {
-        $allowedSelectors = array();
-        if ($this->getConfVar('allowedCSSSelectors')) {
-            $allowedSelectorsTemp = explode(',', $this->getConfVar('allowedCSSSelectors'));
-
-            foreach ($allowedSelectorsTemp as $value) {
-                $value = trim($value);
-                if ($value != '') {
-                    $allowedSelectors[] = $value;
-                }
-            }
-        }
-        return $allowedSelectors;
-    }
 
     private static function wrapArrayItems($before, $after, $arr) {
         $newarr = array();
@@ -360,98 +101,9 @@ class EmailObfuscatorAlt {
         } else {
             return $arr;
         }
+
         return $newarr;
     }
-
-//    /**
-//     * creates random invisible trashcode
-//     *
-//     * @return string
-//     */
-//    private function createInvisibleTrashcode() {
-//        $trashTags = explode(',', trim($this->conf['allowedTrashcodeHTMLTags']));
-//        if (is_array($trashTags)) {
-//            $usedTag = trim($trashTags[(mt_rand(0, count($trashTags) - 1))]);
-//        } else {
-//            $usedTag = 'span';
-//        }
-//        return '<' . $usedTag . ' ' . $this->getHiddenParam() . ' >' . self::randomString(mt_rand(2, 5)) . '</' . $usedTag . '>';
-//    }
-
-//    /**
-//     * @return String hiddenParams
-//     */
-//    private function getHiddenParam() {
-//        return $this->hiddenParams[(mt_rand(0, count($this->hiddenParams) - 1))];
-//    }
-
-//    /**
-//     * generates a random string
-//     *
-//     * @param string $length
-//     * @return string
-//     */
-//    public static function randomString($length) {
-//        if (!($length < 22 && $length > 0)) {
-//            $length = 22;
-//        }
-//
-//        do {
-//            $randomString = substr(base64_encode(pack('H*', md5(microtime()))), 0, $length);
-//        } while (in_array($randomString, self::$reveredJSWords));
-//        return $randomString;
-//    }
-
-//    /**
-//     * removes the 'mailto:' part in a string
-//     * @param String $string
-//     * @return String
-//     */
-//    public static function removeMailto($string) {
-//        return str_replace('mailto:', '', $string);
-//    }
-
-//    /**
-//     * Cuts a String into random pieces between 2 and 4 chars length
-//     *
-//     * @param String $string
-//     * @return Array
-//     */
-//    public static function cutToPieces($string) {
-//        $result[] = array();
-//        $start = 0;
-//
-//        do {
-//            $pieceLength = mt_rand(2, 4);
-//            $piece = substr($string, $start, $pieceLength);
-//            $start += $pieceLength;
-//            if ($piece != '') {
-//                $result[] = $piece;
-//            }
-//        } while ($piece != '');
-//
-//        return $result;
-//    }
-
-//    /**
-//     * encrypts a string to unicode HTML chars
-//     *
-//     * @param String $string
-//     * @return String $result
-//     */
-//    private static function encryptUnicode($string) {
-//        $string = trim($string);
-//        $result = '';
-//        $stringLen = strlen($string);
-//        for ($i = 0; $i <= $stringLen - 1; $i++) {
-//            $result .= self::unicodeToHTML(substr($string, $i, 1));
-//        }
-//        return $result;
-//    }
-
-//    private static function unicodeToHTML($code) {
-//        return '&#' . ord($code) . ';';
-//    }
 
     /**
      * Undoes already parsed typolink for TYPE 'mailto' to get the default value for link and linktext.
@@ -481,6 +133,7 @@ class EmailObfuscatorAlt {
         ) {
             return TRUE;
         }
+
         return FALSE;
     }
 
@@ -561,6 +214,7 @@ class EmailObfuscatorAlt {
         } else if ($offset < 0 && $n < $start) {
             $n = $end - ($start - $n - 1);
         }
+
         return chr($n);
     }
 
@@ -586,6 +240,7 @@ class EmailObfuscatorAlt {
                 $dec .= substr($enc, $i, 1);
             }
         }
+
         return $dec;
     }
 
