@@ -1,3 +1,25 @@
+
+
+
+
+v2.0.0  Thomas Pronold  <tp@tpronold.de>
+
+    * programmed from the scratch.
+    * set back to BETA status
+    * XHTML support
+    * using different hook for better overall support of email links
+    * Support 6.2
+    * Support FLUID
+    * Support plain HTML with email link from TypoScript
+
+TODO:
+    * improved randomizing
+    * refactoring
+    * tests
+
+
+--------------------------------------------------------------------------------
+
 2014-01-30  Thomas Pronold  <tp@tpronold.de>
 
     * Replaced <noscript> with <span>
