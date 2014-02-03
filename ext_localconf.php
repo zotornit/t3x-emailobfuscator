@@ -38,4 +38,3 @@ t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfu
 //TODO default spam dedection
 
 
-//TODO XHTML

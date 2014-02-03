@@ -15,6 +15,7 @@ class CSSService {
     public function __construct() {
 
         self::$conf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['emailobfuscator']);
+
         $this->parseAllowedCSSSelectors();
 
     }
