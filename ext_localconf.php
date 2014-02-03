@@ -26,7 +26,7 @@
 //    = 'EXT:emailobfuscator/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all']['tx_emailobfuscator']
-    = 'EXT:emailobfuscator/Classes/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';
+    = 'EXT:emailobfuscator/Classes/EmailObfuscator.php:&tx_emailobfuscator->init';
 
 //$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['tx_emailobfuscator']
 //    = 'EXT:emailobfuscator/EmailObfuscator.php:&tx_emailobfuscator->initEmailObfuscator';

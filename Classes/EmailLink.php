@@ -41,7 +41,7 @@ class EmailLink {
             $this->link = $link;
             $this->parse();
         } else {
-            throw new InvalidLinkException('The link provided is not valid. Given: ' . htmlspecialchars($link));
+            throw new InvalidLinkException('The link provided is not valid. Given: ' . $link);
         }
     }
 
@@ -63,7 +63,7 @@ class EmailLink {
     private function parse() {
         preg_match_all(self::EMAILLINK_PATTERN, $this->link, $matches);
 
-        var_dump($matches);
+//        var_dump($matches);
         $this->preHREF = trim($matches[1][0]);
         $this->email = trim($matches[2][0]);
         $this->postHREF = trim($matches[3][0]);
