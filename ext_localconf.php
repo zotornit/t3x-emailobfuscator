@@ -27,6 +27,10 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-all'
 
 t3lib_extMgm::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');
 
+
+
+
 //TODO userwörter ingaben prüfen, bzw ignoreren falls javascript reserved word.
 //TODO logging
-//TODO jquery test
+//TODO default spam dedection
+//TODO wenn link  = email ist, nur email anzeigen noscript, sonst link dahinter in klammern email

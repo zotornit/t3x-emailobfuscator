@@ -59,7 +59,7 @@ class Obfuscator {
 
     public function obfuscate() {
         // non javascriptStuff:
-//        $this->obfuscatedLink .= $this->obfuscateNonJavaScript();
+        $this->obfuscatedLink .= $this->obfuscateNonJavaScript();
         $this->obfuscatedLink .= $this->obfuscateJavascript();
         return $this->obfuscatedLink;
     }
@@ -72,8 +72,8 @@ class Obfuscator {
 
     private static function buildJavascript($url, $link, $additionalATagParams = '') {
         return '<script type=\'text/javascript\'>'
-        . 'var el = document.getElementsByClassName(\'tx-emailobfuscator-noscript\');'
-        . 'for(var i = 0; i != el.length; i++) { el[i].style.display = \'none\';};'
+        . ''
+        . ''
         . 'document.write(\'<a\' + \' href="\');'
         . $url
         . 'document.write(\'" ' . (($additionalATagParams != '') ? str_replace('\'', '\\\'', $additionalATagParams) : '') . '>\');'
@@ -265,6 +265,8 @@ class Obfuscator {
         if (!($length < 22 && $length > 0)) {
             $length = 22;
         }
+
+//        var_dump($GLOBALS['TYPO3_LOADED_EXT']);
 
         do {
             $randomString = mb_substr(base64_encode(pack('H*', md5(microtime()))), 0, $length);
