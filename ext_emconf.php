@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "emailobfuscator".
  *
- * Auto generated 30-01-2014 20:21
+ * Auto generated 03-02-2014 22:45
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -15,13 +15,13 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Replaces the default email address spam protection with a better one. The email obfuscation is more randomized, safer and more userfriendly for the website visitor.',
 	'category' => 'fe',
 	'shy' => 0,
-	'version' => '1.1.0',
+	'version' => '2.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'uploadfolder' => '',
 	'createDirs' => '',
 	'modify_tables' => '',
@@ -42,7 +42,7 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:9:{s:9:"ChangeLog";s:4:"53b5";s:28:"EmailObfuscator.php";s:4:"74a7";s:21:"ext_conf_template.txt";s:4:"f9c5";s:12:"ext_icon.gif";s:4:"05cb";s:17:"ext_localconf.php";s:4:"393f";s:14:"ext_tablesdfdf.php";s:4:"636b";s:53:"Resources/Public/Assets/Javascript/emailobfuscator.js";s:4:"dedd";s:14:"doc/manual.pdf";s:4:"53de";s:14:"doc/manual.sxw";s:4:"8afb";}',
+	'_md5_values_when_last_written' => 'a:17:{s:9:"ChangeLog";s:4:"15bd";s:21:"ext_conf_template.txt";s:4:"d988";s:12:"ext_icon.gif";s:4:"05cb";s:17:"ext_localconf.php";s:4:"f21c";s:21:"Classes/EmailLink.php";s:4:"8b69";s:27:"Classes/EmailObfuscator.php";s:4:"7f41";s:30:"Classes/EncryptedEmailLink.php";s:4:"b85c";s:22:"Classes/Obfuscator.php";s:4:"faa5";s:42:"Classes/Exception/InvalidLinkException.php";s:4:"6ed3";s:30:"Classes/Service/CSSService.php";s:4:"cf2d";s:53:"Resources/Public/Assets/Javascript/emailobfuscator.js";s:4:"8a91";s:28:"Tests/Unit/EmailLinkTest.php";s:4:"dfe0";s:37:"Tests/Unit/EncryptedEmailLinkTest.php";s:4:"7974";s:29:"Tests/Unit/ObfuscatorTest.php";s:4:"6027";s:49:"Tests/Unit/Exception/InvalidLinkExceptionTest.php";s:4:"2fab";s:14:"doc/manual.pdf";s:4:"53de";s:14:"doc/manual.sxw";s:4:"8afb";}',
 	'suggests' => array(
 	),
 );

@@ -2,6 +2,12 @@
 
 
 
+
+v2.1.0  Thomas Pronold  <tp@tpronold.de>
+
+    * stable release
+
+
 v2.0.0  Thomas Pronold  <tp@tpronold.de>
 
     * programmed from the scratch.
@@ -11,11 +17,7 @@ v2.0.0  Thomas Pronold  <tp@tpronold.de>
     * Support 6.2
     * Support FLUID
     * Support plain HTML with email link from TypoScript
-
-TODO:
-    * improved randomizing
-    * refactoring
-    * tests
+    * Bugfixes
 
 
 --------------------------------------------------------------------------------
