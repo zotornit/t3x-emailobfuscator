@@ -257,17 +257,13 @@ class Obfuscator {
         $mode = mt_rand(1, 100);
 
         /**
-         * no encryption, leave it blank 15% of time
+         * just unicode encryption, 50% of time
          */
-        if ($mode <= 15) {
-            return self::wrapWithSpan($string);
-        } /**
-         * just unicode encryption, 25% of time
-         */
-        elseif ($mode > 15 && $mode <= 40) {
+        if ($mode <= 50) {
             return self::wrapWithSpan(self::encryptUnicode($string));
-        } /**
-         * just unicode encryption + additional inivisible trashcode, 60% of time
+        }
+        /**
+         * just unicode encryption + additional invisible trashcode, 50% of time
          */
         else {
             return self::wrapWithSpan(self::encryptUnicode($string)) . self::createInvisibleTrashcode();
