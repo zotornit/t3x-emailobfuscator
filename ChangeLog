@@ -1,6 +1,9 @@
 
 
 
+v2.1.1  Thomas Pronold  <tp@tpronold.de>
+
+    * fixed a bug only occurring with the 15% chance to not obfuscate anything.
 
 
 v2.1.0  Thomas Pronold  <tp@tpronold.de>
