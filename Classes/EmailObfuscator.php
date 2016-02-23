@@ -47,7 +47,7 @@ class EmailObfuscator {
         self::$globalConf = $GLOBALS['TSFE']->config['config'];
         self::$conf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['emailobfuscator']);
 
-        // find alle mailto: matches
+        // find all mailto: matches
         preg_match_all(self::EMAILLINK_PATTERN, $this->content, $matches);
 
         foreach ($matches[0] as $link) {
