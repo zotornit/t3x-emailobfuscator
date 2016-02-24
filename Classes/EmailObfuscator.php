@@ -37,8 +37,8 @@ class EmailObfuscator {
     private static $globalConf = array();
     private static $conf = array();
 
-    const EMAILLINK_PATTERN = '#<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i';
-    const DEFAULT_TYPO3_ENCRYPT_PATTERN = '#<a(.+?)href=[\'"]javascript:linkTo_UnCryptMailto\(\'(.{1,})\'\);[\'"](.*?)>(.*?)</a>#i';
+    const EMAILLINK_PATTERN = '#<a([^<>]+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i';
+    const DEFAULT_TYPO3_ENCRYPT_PATTERN = '#<a([^<>]+?)href=[\'"]javascript:linkTo_UnCryptMailto\(\'(.{1,})\'\);[\'"](.*?)>(.*?)</a>#i';
 
     public function init(&$parameters) {
 
