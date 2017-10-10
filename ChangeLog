@@ -1,4 +1,8 @@
 
+v3.0.0  Thomas Pronold  <tp@tpronold.de>
+
+    * Set compatability to TYPO3 7.0+ and 8.0+ (6.x and below are no longer supported)
+
 v2.1.2  Thomas Pronold  <tp@tpronold.de>
 
     * bug fix.
