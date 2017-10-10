@@ -36,7 +36,7 @@ class EmailLink {
 
     protected $emailLinkPattern = '/^<a(.+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)<\/a>$/i';
 
-    public function setLink($link) {
+    public function setLink($link, $spamProtectEmailAddresses, $spamProtectEmailAddresses_atSubst = '(at)', $spamProtectEmailAddresses_lastDotSubst = '.') {
         if ($this->isValid($link)) {
             $this->link = $link;
             $this->parse();
