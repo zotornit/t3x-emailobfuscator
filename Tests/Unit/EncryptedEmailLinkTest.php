@@ -23,7 +23,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/EncryptedEmailLink.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EncryptedEmailLink.php');
 
 class EncryptedEmailLinkTest extends Tx_Phpunit_TestCase {
 

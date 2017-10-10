@@ -25,7 +25,7 @@
 
 mb_internal_encoding("UTF-8");
 
-require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Service/CSSService.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Service/CSSService.php');
 
 class Tx_Emailobfuscator_Obfuscator extends Obfuscator {
 

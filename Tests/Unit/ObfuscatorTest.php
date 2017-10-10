@@ -32,7 +32,7 @@
  * @author Thomas Pronold <tp@tpronold.de>
  */
 
-require_once(t3lib_extMgm::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 
 class ObfuscatorTest extends Tx_Phpunit_TestCase {
 
