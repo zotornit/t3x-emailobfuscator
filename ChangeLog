@@ -1,3 +1,10 @@
+v4.0.1  Thomas Pronold  <tp@tpronold.de>
+    * Add support to obfuscate plain email without link
+    * Fix bug where strict PHP settings complain about not given function parameter
+    * Remove support to obfuscate when default TYPO3 spamProtectEmailAddresses is enabled
+
+v4.0.0  Thomas Pronold  <tp@tpronold.de>
+    * Just set version to 4.0.0
 
 v3.0.0  Thomas Pronold  <tp@tpronold.de>
 

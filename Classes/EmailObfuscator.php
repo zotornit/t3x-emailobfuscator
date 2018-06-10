@@ -25,12 +25,14 @@
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EmailLink.php');
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EncryptedEmailLink.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EmailPlain.php');
 
-class Tx_Emailobfuscator extends EmailObfuscator {
+class Tx_Emailobfuscator extends EmailObfuscator
+{
 }
 
-class EmailObfuscator {
+class EmailObfuscator
+{
 
     private $content = '';
 
@@ -38,9 +40,14 @@ class EmailObfuscator {
     private static $conf = array();
 
     const EMAILLINK_PATTERN = '#<a([^<>]+?)href=[\'"]mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\'"](.*?)>(.*?)</a>#i';
-    const DEFAULT_TYPO3_ENCRYPT_PATTERN = '#<a([^<>]+?)href=[\'"]javascript:linkTo_UnCryptMailto\(\'(.{1,})\'\);[\'"](.*?)>(.*?)</a>#i';
+    const EMAIL_PLAIN_PATTERN = '#([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})#i';
 
-    public function init(&$parameters) {
+    public function init(&$parameters)
+    {
+
+        if (self::isSpamProtectEmailAddressesEnabled()) {
+            throw new \TYPO3\CMS\Core\Exception("emailobfuscator extension does not work when TYPO3 default spamProtectEmailAddresses is enabled. Check your TypoScript config and set 'config.spamProtectEmailAddresses = 0'");
+        }
 
         $this->content = $parameters['pObj']->content;
 
@@ -55,54 +62,44 @@ class EmailObfuscator {
             $this->content = str_replace($link, $obf->obfuscate(), $this->content);
         }
 
-        // find all default spam protected links
-        if (self::isSpamProtectEmailAddressesEnabled() && self::isOverwriteSpamProtectEmailAddressesEnabled()) {
 
-            preg_match_all(self::DEFAULT_TYPO3_ENCRYPT_PATTERN, $this->content, $matches);
+        if (self::$conf['convertPlainEmailAddresses']) {
 
-            foreach ($matches[0] as $link) {
-                $obf = new Obfuscator(
-                    new EncryptedEmailLink(
-                        $link,
-                        $this->getspamProtectEmailAddresses(),
-                        $this->getSpamProtectEmailAddresses_atSubst(),
-                        $this->getSpamProtectEmailAddresses_lastDotSubst()
-                    )
-                );
-                $this->content = str_replace($link, $obf->obfuscate(), $this->content);
+            // find all plain email matches
+            preg_match_all(self::EMAIL_PLAIN_PATTERN, $this->content, $matchesPlain);
+            foreach ($matchesPlain[0] as $emailPlain) {
+                $obf = new Obfuscator(new EmailPlain($emailPlain));
+                $this->content = str_replace($emailPlain, $obf->obfuscate(), $this->content);
             }
         }
+
 
         $parameters['pObj']->content = $this->content;
     }
 
-    private function getSpamProtectEmailAddresses_atSubst() {
+    private function getSpamProtectEmailAddresses_atSubst()
+    {
         if (!isset(self::$globalConf['spamProtectEmailAddresses_atSubst']) || self::$globalConf['spamProtectEmailAddresses_atSubst'] == '') {
             return '(at)';
         }
         return self::$globalConf['spamProtectEmailAddresses_atSubst'];
     }
 
-    private function getSpamProtectEmailAddresses_lastDotSubst() {
+    private function getSpamProtectEmailAddresses_lastDotSubst()
+    {
         if (!isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) || self::$globalConf['spamProtectEmailAddresses_lastDotSubst'] == '') {
             return '.';
         }
         return self::$globalConf['spamProtectEmailAddresses_lastDotSubst'];
     }
 
-    private function getspamProtectEmailAddresses() {
+    private function getspamProtectEmailAddresses()
+    {
         return self::$globalConf['spamProtectEmailAddresses'];
     }
 
-    private static function isOverwriteSpamProtectEmailAddressesEnabled() {
-        if (self::$conf['overwriteSpamProtectEmailAddresses'] == 1) {
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
-    private function isSpamProtectEmailAddressesEnabled() {
+    private function isSpamProtectEmailAddressesEnabled()
+    {
         if (isset(self::$globalConf['spamProtectEmailAddresses'])
             && is_numeric(self::$globalConf['spamProtectEmailAddresses'])
             && self::$globalConf['spamProtectEmailAddresses'] != 0

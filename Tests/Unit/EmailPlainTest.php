@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Thomas Pronold (tp@tpronold.de)
+ *  (c) 2014 Thomas Pronold (someone@somewhere.tld)
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,16 +23,15 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EncryptedEmailLink.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EmailPlain.php');
 
-class EncryptedEmailLinkTest extends Tx_Phpunit_TestCase {
+class EmailPlainTest extends \PHPUnit_Framework_TestCase {
 
     protected $fixture;
 
-    private $linkToTest = '<a href="javascript:linkTo_UnCryptMailto(\'thpsav1awGawyvuvsk5kl\');" class="mail" >tp(at)tpronold.de</a>';
-
     public function setUp() {
-        $this->fixture = new EncryptedEmailLink($this->linkToTest, 7);
+        $linkToSet = 'someone@somewhere.tld';
+        $this->fixture = new EmailPlain($linkToSet);
     }
 
     public function tearDown() {
@@ -42,7 +41,27 @@ class EncryptedEmailLinkTest extends Tx_Phpunit_TestCase {
     /**
      * @test
      */
-    public function validEncryptedLinkTest() {
-        $this->assertEquals(1, preg_match($this->fixture->getEncryptedEmailLinkPattern(), $this->linkToTest));
+    public function setLinkTest() {
+        $linkToSet = 'someone@somewhere.tld';
+        $this->fixture->setLink($linkToSet);
     }
+    /**
+     * @test
+     */
+    public function getEmailTest() {
+        $this->assertEquals('someone@somewhere.tld', $this->fixture->getEmail());
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException InvalidLinkException
+     *
+     * @throws InvalidLinkException
+     */
+    public function setInvalidLinkThrowsExceptionTest() {
+        $linkToSet = '';
+        $this->fixture->setLink($linkToSet);
+    }
+
 }

@@ -7,5 +7,5 @@ allowedCSSSelectors = these,are,some,random,seperator,classnames
 # cat=basic; type=string; label=Prefix for allowedCSSSelectors: Use this option if you are not sure whether the allowedCSSSelectors may mess up existing CSS style. If you do not use any of the allowedCSSSelectors in your CSS you should leave this option empty and you will be fine.
 CSSSelectorPrefix =
 
-# cat=basic; type=boolean; label=Overwrite default spamprotection: Overwrites default TYPO3 config.spamProtectEmailAddresses. If enabled all links encrypted by config.spamProtectEmailAddresses will be overwritten and obfuscated as well.
-overwriteSpamProtectEmailAddresses = 1
+# cat=basic; type=boolean; label= Convert plain email addresses as well.
+convertPlainEmailAddresses = 1

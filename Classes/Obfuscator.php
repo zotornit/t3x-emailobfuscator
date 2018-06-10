@@ -36,6 +36,8 @@ class Obfuscator {
     private $emailLink;
     private $obfuscatedLink = '';
 
+    private $emailPlainType = false;
+
     private static $allowedTrashcodeHTMLTags = array();
     private static $allowedTrashcodeHTMLTagsParsed = FALSE;
 
@@ -61,6 +63,11 @@ class Obfuscator {
         if (!$emailLink instanceof EmailLink) {
             throw new InvalidArgumentException('Argument must be instance of EmailLink');
         }
+
+        if ($emailLink instanceof EmailPlain) {
+            $this->emailPlainType = true;
+        }
+
         $this->emailLink = $emailLink;
 
         $this->parseAllowedTrashcodeHTMLTags();
@@ -109,10 +116,28 @@ class Obfuscator {
     }
 
     private function obfuscateJavascript() {
-        $javascriptURLPart = self::convertToJSWriteDocument('mailto:' . $this->emailLink->getEmail());
-        $javascriptLinkPart = self::convertToJSWriteDocument($this->emailLink->getLinkText());
+        if($this->emailPlainType) {
+            $javascriptURLPart = self::convertToJSWriteDocument($this->emailLink->getEmail());
+            return self::buildPlainEmailJavascript($javascriptURLPart);
+        } else {
+            $javascriptURLPart = self::convertToJSWriteDocument('mailto:' . $this->emailLink->getEmail());
+            $javascriptLinkPart = self::convertToJSWriteDocument($this->emailLink->getLinkText());
+            return self::buildJavascript($javascriptURLPart, $javascriptLinkPart, $this->emailLink->getPreHREF() . ' ' . $this->emailLink->getPostHREF());
+        }
+    }
 
-        return self::buildJavascript($javascriptURLPart, $javascriptLinkPart, $this->emailLink->getPreHREF() . ' ' . $this->emailLink->getPostHREF());
+    private static function buildPlainEmailJavascript($link) {
+        self::isXHTMLEnabled();
+
+        return '<script type=\'text/javascript\'>'
+            . ((self::isXHTMLEnabled()) ? '/* <![CDATA[ */ ' : '')
+//            . 'document.write(\'<a\' + \' href="\');'
+//            . $url
+//            . 'document.write(\'" ' . (($additionalATagParams != '') ? str_replace('\'', '\\\'', $additionalATagParams) : '') . '>\');'
+            . $link
+//            . 'document.write(endATag);'
+            . ((self::isXHTMLEnabled()) ? '/* ]]> */' : '')
+            . '</script>';
     }
 
     private static function buildJavascript($url, $link, $additionalATagParams = '') {
@@ -184,7 +209,9 @@ class Obfuscator {
                     $noJavascriptPart .= $this->randomObfuscation($linkTextPart);
                 }
             }
-            $noJavascriptPart .= ' (';
+            if (!$this->emailPlainType) {
+                $noJavascriptPart .= ' (';
+            }
         }
 
         if (is_array($piecesEmailLink) && count($piecesEmailLink) > 0) {
@@ -217,8 +244,9 @@ class Obfuscator {
         }
 
         if (mb_strtolower($this->emailLink->getEmail()) != mb_strtolower($this->emailLink->getLinkText())) {
-
-            $noJavascriptPart .= ')';
+            if (!$this->emailPlainType) {
+                $noJavascriptPart .= ')';
+            }
         }
 
         $noJavascriptPart .= '</span>';

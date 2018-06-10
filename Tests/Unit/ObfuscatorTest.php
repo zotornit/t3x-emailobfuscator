@@ -34,7 +34,7 @@
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
 
-class ObfuscatorTest extends Tx_Phpunit_TestCase {
+class ObfuscatorTest extends \PHPUnit_Framework_TestCase {
 
     protected $fixture;
 
