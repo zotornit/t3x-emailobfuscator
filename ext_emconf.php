@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Replaces the default email address spam protection with a better one. The email obfuscation is more randomized, safer and more userfriendly for the website visitor.',
 	'category' => 'fe',
 	'shy' => 0,
-	'version' => '4.0.1',
+	'version' => '5.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -34,8 +34,8 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'php' => '5.5.0-7.1.999',
-			'typo3' => '7.6.0-8.8.99',
+			'php' => '7.1.0-7.3.999',
+			'typo3' => '8.7.0-9.5.99',
 		),
 		'conflicts' => array(
 		),
