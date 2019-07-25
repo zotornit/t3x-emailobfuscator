@@ -1,9 +1,9 @@
 <?php
 
-class Tx_Emailobfuscator_Service_CSSService extends CSSService {
-}
+namespace TPronold\Emailobfuscator\Service;
 
-class CSSService {
+class CSSService
+{
 
     private static $allowedCSSSelectors = array();
     private static $parseAllowedCSSSelectorsParsed = FALSE;

@@ -1,5 +1,7 @@
 <?php
 
+namespace TPronold\Emailobfuscator;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,13 +25,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Obfuscator.php');
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EmailLink.php');
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/EmailPlain.php');
-
-class Tx_Emailobfuscator extends EmailObfuscator
-{
-}
 
 class EmailObfuscator
 {

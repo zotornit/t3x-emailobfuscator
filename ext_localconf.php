@@ -23,9 +23,9 @@
  ***************************************************************/
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['tx_emailobfuscator']
-    = 'EXT:emailobfuscator/Classes/EmailObfuscator.php:&tx_emailobfuscator->init';
+    = \TPronold\Emailobfuscator\EmailObfuscator::class . '->init';
 
 $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_emailobfuscator']
-    = 'EXT:emailobfuscator/Classes/Service/CSSService.php:&Tx_Emailobfuscator_Service_CSSService->addAllowedSelectorsToCSSDefaultStyle';
+    = \TPronold\Emailobfuscator\Service\CSSService::class . '->addAllowedSelectorsToCSSDefaultStyle';
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup('page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/Assets/Javascript/emailobfuscator.js');

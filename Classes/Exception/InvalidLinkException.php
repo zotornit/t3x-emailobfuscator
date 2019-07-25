@@ -1,4 +1,7 @@
 <?php
 
-class InvalidLinkException extends \TYPO3\CMS\Core\Exception {
+namespace TPronold\Emailobfuscator;
+
+class InvalidLinkException extends \TYPO3\CMS\Core\Exception
+{
 }

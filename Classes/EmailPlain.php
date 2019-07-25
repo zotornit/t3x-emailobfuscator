@@ -1,5 +1,7 @@
 <?php
 
+namespace TPronold\Emailobfuscator;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,11 +25,9 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class Tx_EmailObfuscator_EmailPlain extends EmailPlain {
 
-}
-
-class EmailPlain extends EmailLink {
+class EmailPlain extends EmailLink
+{
     protected $link = '';
     protected $email = '';
 

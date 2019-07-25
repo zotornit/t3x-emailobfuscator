@@ -1,5 +1,7 @@
 <?php
 
+namespace TPronold\Emailobfuscator;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -25,13 +27,10 @@
 
 mb_internal_encoding("UTF-8");
 
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('emailobfuscator') . 'Classes/Service/CSSService.php');
+use TPronold\Emailobfuscator\Service\CSSService;
 
-class Tx_Emailobfuscator_Obfuscator extends Obfuscator {
-
-}
-
-class Obfuscator {
+class Obfuscator
+{
 
     private $emailLink;
     private $obfuscatedLink = '';
