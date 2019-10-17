@@ -1,10 +1,15 @@
 {
   "name": "zotorn/emailobfuscator",
-  "type": "emailobfuscator",
+  "type": "typo3-cms-extension",
   "description": "Replaces the default email address spam protection with a better one. The email obfuscation is more randomized, safer and more user friendly for the website visitor.",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^7.2",
-    "typo3/cms-core": "^9.5"
+    "php": "^7.1",
+    "typo3/cms-core": "^8.7"
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "emailobfuscator"
+    }
   }
 }
