@@ -1,3 +1,9 @@
+v5.0.0  Thomas Pronold  <tp@zotorn.de>
+    * Maintenance take over by Zotorn IT
+    * TYPO3 9 support - Thanks to sypets
+    * Clean up - Round House Kick :)
+    * Composer and other best practise changes
+
 v4.0.1  Thomas Pronold  <tp@tpronold.de>
     * Add support to obfuscate plain email without link
     * Fix bug where strict PHP settings complain about not given function parameter

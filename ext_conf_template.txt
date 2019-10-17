@@ -1,7 +1,7 @@
-# cat=basic; type=string; label=Allowed HTML Tags: Use following HTML tags to create obfuscating trashcode. Depending on you HTML doctype you may have to add or remove some tags. An empty list will just use "span" (comma separated list)
+# cat=basic; type=string; label=Allowed HTML Tags: Use following HTML tags to create obfuscating trash code. Depending on your HTML doctype you may have to add or remove some tags. An empty list will just use "span" (comma separated list)
 allowedTrashcodeHTMLTags = span,a,strong,em,abbr,code,i,b,sub,sup
 
-# cat=basic; type=string; label=Allowed CSS Selectors: Use this selectors to create CSS selectors whose only tasks are to not display elements. An empty list will not use any CSS selectors. (comma separated list)
+# cat=basic; type=string; label=Allowed CSS Selectors: Use this selectors to create CSS selectors whose only tasks are to NOT display elements. An empty list will not use any CSS selectors. (comma separated list)
 allowedCSSSelectors = these,are,some,random,seperator,classnames
 
 # cat=basic; type=string; label=Prefix for allowedCSSSelectors: Use this option if you are not sure whether the allowedCSSSelectors may mess up existing CSS style. If you do not use any of the allowedCSSSelectors in your CSS you should leave this option empty and you will be fine.
