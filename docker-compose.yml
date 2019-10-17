@@ -1,0 +1,10 @@
+# render local doc with `docker-compose run --rm t3docmake`
+version: '2'
+services:
+  t3docmake:
+    image: t3docs/render-documentation:latest
+    volumes:
+      - ./:/PROJECT:ro
+      - ./Documentation-GENERATED-temp:/RESULT
+    command: makehtml
+
