@@ -48,27 +48,6 @@ class EmailObfuscator
         $parameters['pObj']->content = $this->content;
     }
 
-    private function getSpamProtectEmailAddresses_atSubst()
-    {
-        if (!isset(self::$globalConf['spamProtectEmailAddresses_atSubst']) || self::$globalConf['spamProtectEmailAddresses_atSubst'] == '') {
-            return '(at)';
-        }
-        return self::$globalConf['spamProtectEmailAddresses_atSubst'];
-    }
-
-    private function getSpamProtectEmailAddresses_lastDotSubst()
-    {
-        if (!isset(self::$globalConf['spamProtectEmailAddresses_lastDotSubst']) || self::$globalConf['spamProtectEmailAddresses_lastDotSubst'] == '') {
-            return '.';
-        }
-        return self::$globalConf['spamProtectEmailAddresses_lastDotSubst'];
-    }
-
-    private function getspamProtectEmailAddresses()
-    {
-        return self::$globalConf['spamProtectEmailAddresses'];
-    }
-
     private function isSpamProtectEmailAddressesEnabled()
     {
         if (isset(self::$globalConf['spamProtectEmailAddresses'])
