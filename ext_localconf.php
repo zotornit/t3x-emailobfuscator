@@ -1,11 +1,18 @@
 <?php
 
-$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['tx_emailobfuscator']
-    = \ZOTORN\EmailObfuscator\EmailObfuscator::class . '->init';
+defined('TYPO3_MODE') || die();
 
-$TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_emailobfuscator']
-    = \ZOTORN\EmailObfuscator\Service\CSSService::class . '->addAllowedSelectorsToCSSDefaultStyle';
+call_user_func(function() {
+    $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['contentPostProc-output']['tx_emailobfuscator']
+        = \ZOTORN\EmailObfuscator\EmailObfuscator::class . '->init';
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(
-    'page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/JavaScript/emailobfuscator.js'
-);
+    $TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['headerNoCache']['tx_emailobfuscator']
+        = \ZOTORN\EmailObfuscator\Service\CSSService::class . '->addAllowedSelectorsToCSSDefaultStyle';
+
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(
+        'page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/JavaScript/emailobfuscator.js'
+    );
+});
+
+
+
