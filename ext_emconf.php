@@ -23,7 +23,7 @@ $EM_CONF['emailobfuscator'] = array(
 	),
 	'autoload' => [
 		'psr-4' => [
-			'EMAILOBFUSCATOR\\EmailObfuscator\\' => 'Classes'
+			'EMAILOBFUSCATOR\\Emailobfuscator\\' => 'Classes'
 		]
 	],
 );

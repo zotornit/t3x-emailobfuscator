@@ -1,7 +1,7 @@
 <?php
 
-namespace ZOTORN\EmailObfuscator;
+namespace EMAILOBFUSCATOR\Emailobfuscator\Exception;
 
-class InvalidLinkException extends \TYPO3\CMS\Core\Exception
+class InvalidLinkException extends \TYPO3\CMS\Extbase\Exception
 {
 }

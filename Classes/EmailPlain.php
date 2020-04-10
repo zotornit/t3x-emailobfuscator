@@ -1,6 +1,8 @@
 <?php
 
-namespace ZOTORN\EmailObfuscator;
+namespace EMAILOBFUSCATOR\Emailobfuscator;
+
+use EMAILOBFUSCATOR\Emailobfuscator\Exception\InvalidLinkException;
 
 class EmailPlain extends EmailLink
 {

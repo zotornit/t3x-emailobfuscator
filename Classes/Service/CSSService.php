@@ -1,6 +1,6 @@
 <?php
 
-namespace ZOTORN\EmailObfuscator\Service;
+namespace EMAILOBFUSCATOR\Emailobfuscator\Service;
 
 class CSSService
 {

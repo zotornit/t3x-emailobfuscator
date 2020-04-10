@@ -1,6 +1,6 @@
 <?php
 
-namespace ZOTORN\EmailObfuscator;
+namespace EMAILOBFUSCATOR\Emailobfuscator;
 
 class EmailObfuscator
 {

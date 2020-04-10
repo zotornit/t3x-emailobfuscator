@@ -1,10 +1,11 @@
 <?php
 
-namespace ZOTORN\EmailObfuscator;
+namespace EMAILOBFUSCATOR\Emailobfuscator;
 
 mb_internal_encoding("UTF-8");
 
-use ZOTORN\EmailObfuscator\Service\CSSService;
+use EMAILOBFUSCATOR\Emailobfuscator\Service\CSSService;
+use InvalidArgumentException;
 
 class Obfuscator
 {
@@ -234,7 +235,7 @@ class Obfuscator
      * Cuts a String into random pieces between 2 and 4 chars length
      *
      * @param String $string
-     * @return Array
+     * @return array
      */
     public static function cutToPieces($string) {
         $result = array();
