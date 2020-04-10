@@ -2,3 +2,8 @@
 .DS_Store
 # ignore generated documentation
 *GENERATED*
+
+
+.Build/
+Build/testing-docker/.env
+composer.lock
