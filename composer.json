@@ -1,14 +1,64 @@
 {
-  "name": "zotorn/emailobfuscator",
+  "name": "zotornit/emailobfuscator",
+  "authors": [
+    {
+      "name": "Thomas Pronold",
+      "role": "Developer",
+      "homepage": "https://zotorn.de",
+      "email": "tp@zotorn.de"
+    }
+  ],
   "type": "typo3-cms-extension",
   "description": "Replaces the default email address spam protection with a better one. The email obfuscation is more randomized, safer and more user friendly for the website visitor.",
+  "homepage": "https://github.com/zotornit/t3x-emailobfuscator",
   "license": "GPL-2.0-or-later",
+  "keywords": [
+    "typo3",
+    "email",
+    "obfuscation",
+    "obfuscate",
+    "obfuscator",
+    "mail",
+    "encrypt",
+    "zotornit",
+    "zotorn"
+  ],
+  "support": {
+    "issues": "https://github.com/zotornit/t3x-emailobfuscator/issues"
+  },
+  "autoload": {
+    "psr-4": {
+      "EMAILOBFUSCATOR\\Emailobfuscator\\": "Classes/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "EMAILOBFUSCATOR\\Emailobfuscator\\Tests\\": "Tests/"
+    }
+  },
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin"
+  },
+  "require-dev": {
+    "typo3/cms-core": "^9.5",
+    "typo3/cms-frontend": "^9.5",
+    "typo3/cms-install": "^9.5",
+    "typo3/cms-about": "^9.5",
+    "typo3/testing-framework": "^4.11.0"
+  },
   "require": {
-    "php": "^7.1",
-    "typo3/cms-core": "^8.7"
+    "typo3/cms-core": "^8.7 || ^9.5 || ^10"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+    ]
   },
   "extra": {
     "typo3/cms": {
+      "app-dir": ".Build",
+      "web-dir": ".Build/Web",
       "extension-key": "emailobfuscator"
     }
   }
