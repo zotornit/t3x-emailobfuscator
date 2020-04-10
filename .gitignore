@@ -1,2 +1,4 @@
 .idea/
-Documentation-GENERATED-temp
+.DS_Store
+# ignore generated documentation
+*GENERATED*
