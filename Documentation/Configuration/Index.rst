@@ -25,23 +25,23 @@ with option “display: none;” like this:
 
 .. code-block:: css
 
-    mySelectorName {
+    .mySelectorName {
         display: none;
     }
 
 You should edit this option if you want to use different selector names OR if one or
-more of the selectors in the list are already used within you website CSS
-configuration to prevent overriding existing CSS selectors.
+more of the selectors in the list are already used within your website CSS
+configuration to prevent overwriting existing CSS selectors.
 
 Prefix for allowedCSSSelectors
 ==============================
 
 If you don't know exactly which CSS selectors are already used then add a prefix.
-Adding prefix “mySuperSecretPrefix” will result this CSS definition:
+Adding prefix “mySuperSecretPrefix” will result in this CSS definition:
 
 .. code-block:: css
 
-    mySuperSecretPrefixmySelectorName {
+    .mySuperSecretPrefixmySelectorName {
         display: none;
     }
 
