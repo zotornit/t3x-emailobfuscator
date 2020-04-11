@@ -15,14 +15,16 @@ class EmailObfuscator
 
     public function init(&$parameters)
     {
+        self::$globalConf = $GLOBALS['TSFE']->config['config'];
 
         if (self::isSpamProtectEmailAddressesEnabled()) {
+
             throw new \TYPO3\CMS\Core\Exception("emailobfuscator extension does not work when TYPO3 default spamProtectEmailAddresses is enabled. Check your TypoScript config and set 'config.spamProtectEmailAddresses = 0'");
         }
 
         $this->content = $parameters['pObj']->content;
 
-        self::$globalConf = $GLOBALS['TSFE']->config['config'];
+
         self::$conf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['emailobfuscator']);
 
         // find all mailto: matches
@@ -50,14 +52,9 @@ class EmailObfuscator
 
     private function isSpamProtectEmailAddressesEnabled()
     {
-        if (isset(self::$globalConf['spamProtectEmailAddresses'])
+        return isset(self::$globalConf['spamProtectEmailAddresses'])
             && is_numeric(self::$globalConf['spamProtectEmailAddresses'])
-            && self::$globalConf['spamProtectEmailAddresses'] != 0
-        ) {
-            return TRUE;
-        }
-
-        return FALSE;
+            && self::$globalConf['spamProtectEmailAddresses'] != 0;
     }
 
 }
