@@ -2,6 +2,8 @@
 
 namespace EMAILOBFUSCATOR\Emailobfuscator;
 
+use TYPO3\CMS\Core\Log\Logger;
+
 class EmailObfuscator
 {
 
@@ -18,8 +20,15 @@ class EmailObfuscator
         self::$globalConf = $GLOBALS['TSFE']->config['config'];
 
         if (self::isSpamProtectEmailAddressesEnabled()) {
-
-            throw new \TYPO3\CMS\Core\Exception("emailobfuscator extension does not work when TYPO3 default spamProtectEmailAddresses is enabled. Check your TypoScript config and set 'config.spamProtectEmailAddresses = 0'");
+            // TODO When LTS8 support is dropped use new LTS 9+ method of getting the logger instance
+            /** @var Logger $logger */
+            $logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+            $logger->warning(
+                "emailobfuscator extension does not work when default config.spamProtectEmailAddresses is enabled. " .
+                "Check your TypoScript config and set 'config.spamProtectEmailAddresses = 0'. " .
+                "Happened on page id #". $GLOBALS['TSFE']->id, []
+            );
+            return;
         }
 
         $this->content = $parameters['pObj']->content;

@@ -12,6 +12,12 @@ call_user_func(function() {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup(
         'page.includeJS.emailobfuscator = EXT:emailobfuscator/Resources/Public/JavaScript/emailobfuscator.js'
     );
+
+    $GLOBALS['TYPO3_CONF_VARS']['LOG']['EMAILOBFUSCATOR']['Emailobfuscator']['EmailObfuscator']['writerConfiguration'] = [
+        \TYPO3\CMS\Core\Log\LogLevel::WARNING => [
+            \EMAILOBFUSCATOR\Emailobfuscator\Log\Writer\SysLogDatabaseWriter::class => [],
+        ],
+    ];
 });
 
 
