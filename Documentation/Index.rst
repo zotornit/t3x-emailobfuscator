@@ -13,7 +13,7 @@ emailobfuscator - TYPO3 extension
    en
 
 :Authors:
-   Thomas Pronold | Zotorn IT
+   Thomas Pronold | zotorn.de
 
 :Email:
    tp@zotorn.de
