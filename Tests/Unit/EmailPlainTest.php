@@ -1,5 +1,7 @@
 <?php
+namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Unit;
 
+use EMAILOBFUSCATOR\Emailobfuscator\EmailPlain;
 
 class EmailPlainTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase {
 
@@ -31,9 +33,9 @@ class EmailPlainTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase {
     /**
      * @test
      *
-     * @expectedException InvalidLinkException
+     * @expectedException \EMAILOBFUSCATOR\Emailobfuscator\Exception\InvalidLinkException
      *
-     * @throws InvalidLinkException
+     * @throws \EMAILOBFUSCATOR\Emailobfuscator\Exception\InvalidLinkException
      */
     public function setInvalidLinkThrowsExceptionTest() {
         $linkToSet = '';

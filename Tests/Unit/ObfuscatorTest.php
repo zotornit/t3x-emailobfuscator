@@ -1,11 +1,22 @@
 <?php
 
+namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Unit;
+
+use EMAILOBFUSCATOR\Emailobfuscator\EmailLink;
+use EMAILOBFUSCATOR\Emailobfuscator\Obfuscator;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ObfuscatorTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase {
 
     protected $fixture;
 
     public function setUp() {
+        $requestProphecy = $this->prophesize(TypoScriptFrontendController::class);
+        $requestProphecy->config = [
+            'config' => []
+        ];
+        $GLOBALS['TSFE'] = $requestProphecy;
+
         $linkToSet = '<a href="mailto:tp@tpronold.de">tp@tpronold.de</a>';
         $this->fixture = new Obfuscator(new EmailLink($linkToSet));
     }
@@ -17,9 +28,9 @@ class ObfuscatorTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase {
     /**
      * @test
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setInvalidArgumentThrowsExceptionTest() {
         new Obfuscator("TEST");
