@@ -7,42 +7,129 @@
 Configuration
 =============
 
-All administration is done in the configuration section of this extension.
+All configuration is done using TypoScript. This allows for individual adjustments on a per page basis.
 
-Allowed HTML Tags
-=================
+Properties
+==========
 
-Comma separated list with HTML elements. Each element in the list will be randomly
-used to obfuscate the email address. Its recommended to use only inline elements.
-You can add or remove other Elements. If the list is empty only the <span> tag will
-be used.
 
-Allowed CSS Selectors
-=====================
 
-Comma separated list with CSS Selectors. Each selector will be added to the CSS File
-with option “display: none;” like this:
+enabled
+------
 
-.. code-block:: css
+.. container:: table-row
 
-    .mySelectorName {
-        display: none;
+    Property
+         enabled
+
+    Data type
+         boolean (default: false)
+
+    Description
+         Enable/Disable the obfuscation for the given page.
+
+
+
+.. code-block:: typoscript
+
+    plugin.tx_emailobfuscator.settings.enabled = 1
+
+
+
+
+
+obfuscateEmailLinks
+------
+
+.. container:: table-row
+
+    Property
+         obfuscateEmailLinks
+
+    Data type
+         boolean (default: true)
+
+    Description
+         Enable/Disable the obfuscation for email links like :code:`<a href="mailto:mail@domain.tld">Send email</a>`.
+         If your website does not support JavaScript, disable this option.
+
+
+
+.. code-block:: typoscript
+
+    plugin.tx_emailobfuscator.settings {
+        enabled = 1
+        obfuscateEmailLinks = 0
     }
 
-You should edit this option if you want to use different selector names OR if one or
-more of the selectors in the list are already used within your website CSS
-configuration to prevent overwriting existing CSS selectors.
 
-Prefix for allowedCSSSelectors
-==============================
+obfuscatePlainEmails
+------
 
-If you don't know exactly which CSS selectors are already used then add a prefix.
-Adding prefix “mySuperSecretPrefix” will result in this CSS definition:
+.. container:: table-row
 
-.. code-block:: css
+    Property
+         obfuscatePlainEmails
 
-    .mySuperSecretPrefixmySelectorName {
-        display: none;
+    Data type
+         boolean (default: true)
+
+    Description
+         Enable/Disable the obfuscation for plain emails like :code:`mail@domain.tld`
+
+
+
+.. code-block:: typoscript
+
+    plugin.tx_emailobfuscator.settings {
+        enabled = 1
+        obfuscatePlainEmails = 1
     }
 
 
+patternEmailLinks
+------
+
+.. container:: table-row
+
+    Property
+         patternEmailLinks
+
+    Data type
+         boolean (default: :code:`/<a[.\s\S]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i`)
+
+    Description
+         The regex pattern which will search for email links. Usually you do not want to change this. It is primary for testing purposes.
+
+
+
+.. code-block:: typoscript
+
+    plugin.tx_emailobfuscator.settings {
+        enabled = 1
+        patternEmailLinks = /<a[.\s\S]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i
+    }
+
+
+patternPlainEmails
+------
+
+.. container:: table-row
+
+    Property
+         patternPlainEmails
+
+    Data type
+         boolean (default: :code:`/[a-zA-Z.0-9-+]+@[a-zA-Z.0-9-]+/i`)
+
+    Description
+         The regex pattern which will search for plain emails. Usually you do not want to change this. It is primary for testing purposes.
+
+
+
+.. code-block:: typoscript
+
+    plugin.tx_emailobfuscator.settings {
+        enabled = 1
+        patternPlainEmails = /[a-zA-Z.0-9-+]+@[a-zA-Z.0-9-]+/i
+    }
