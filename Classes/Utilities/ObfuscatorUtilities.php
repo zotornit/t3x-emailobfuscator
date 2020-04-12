@@ -81,7 +81,7 @@ class ObfuscatorUtilities
     public static function obfuscateToJavaScript(string $string, float $weight = 0.7): string
     {
         $output[] = '<script type="text/javascript">(function(p,u){for(i of u){document.write(p[i]);}})(';
-        $pieces = self::cutRandom($string);
+        $pieces = self::cutRandom(str_replace([PHP_EOL, "\r"], " ", $string));
         $goodIndexIterator = 0;
         $goodIndexes = [];
         $walkIterator = 0;
@@ -90,7 +90,7 @@ class ObfuscatorUtilities
                 $piecesToAdd[] = '\'' . self::randChars(3) . '\',';
                 $goodIndexIterator++;
             } else { // do real;
-                $piecesToAdd[] = '\'' . $pieces[$walkIterator++] . '\',';
+                $piecesToAdd[] = '\'' . str_replace('\'', '\\\'', $pieces[$walkIterator++]) . '\',';
                 $goodIndexes[] = $goodIndexIterator++;
             }
         }

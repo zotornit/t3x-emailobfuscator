@@ -96,7 +96,7 @@ patternEmailLinks
          patternEmailLinks
 
     Data type
-         boolean (default: :code:`/<a[.\s\S]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i`)
+         boolean (default: :code:`/<a[^>]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i`)
 
     Description
          The regex pattern which will search for email links. Usually you do not want to change this. It is primary for testing purposes.
@@ -107,7 +107,7 @@ patternEmailLinks
 
     plugin.tx_emailobfuscator.settings {
         enabled = 1
-        patternEmailLinks = /<a[.\s\S]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i
+        patternEmailLinks = /<a[^>]*?href=['"]mailto:[.\s\S]*?<\s*\/\s*a\s*>/i
     }
 
 
