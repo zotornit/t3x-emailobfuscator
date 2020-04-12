@@ -104,7 +104,7 @@ class Obfuscator
     }
 
     private static function buildPlainEmailJavascript($link) {
-        self::isXHTMLEnabled();
+//        self::isXHTMLEnabled();
 
         return '<script type=\'text/javascript\'>'
             . ((self::isXHTMLEnabled()) ? '/* <![CDATA[ */ ' : '')
@@ -118,7 +118,7 @@ class Obfuscator
     }
 
     private static function buildJavascript($url, $link, $additionalATagParams = '') {
-        self::isXHTMLEnabled();
+//        self::isXHTMLEnabled();
 
         return '<script type=\'text/javascript\'>'
         . ((self::isXHTMLEnabled()) ? '/* <![CDATA[ */ ' : '')
