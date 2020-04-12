@@ -48,7 +48,7 @@ class ObfuscationHook implements SingletonInterface
             if (!isset($settings['patternEmailLinks']) || empty(trim($settings['patternEmailLinks']))) {
                 $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content);
             } else {
-                $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content, $settings['patternEmailLinks']);
+                $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content, trim($settings['patternEmailLinks']));
             }
         }
 
@@ -56,7 +56,7 @@ class ObfuscationHook implements SingletonInterface
             if (!isset($settings['patternPlainEmails']) || empty(trim($settings['patternPlainEmails']))) {
                 $parameters['pObj']->content = $service->obfuscatePlainEmails($parameters['pObj']->content);
             } else {
-                $parameters['pObj']->content = $service->obfuscatePlainEmails($parameters['pObj']->content, $settings['patternPlainEmails']);
+                $parameters['pObj']->content = $service->obfuscatePlainEmails($parameters['pObj']->content, trim($settings['patternPlainEmails']));
             }
         }
     }
