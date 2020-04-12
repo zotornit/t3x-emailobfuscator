@@ -8,12 +8,27 @@ use EMAILOBFUSCATOR\Emailobfuscator\Service\ObfuscationService;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class ObfuscationHook implements SingletonInterface
 {
 
     public function obfuscatePageContent(&$parameters)
     {
+        /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
+        $settings = $configurationManager->getConfiguration(
+            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+            'emailobfuscator' //extkey
+        );
+
+        // return when, disabled
+        if (!isset($settings['enabled']) || !boolval($settings['enabled'])) {
+            return;
+        }
+
         if (self::isSpamProtectEmailAddressesEnabled()) {
             // TODO When LTS8 support is dropped use new LTS 9+ method of getting the logger instance
             /** @var Logger $logger */
@@ -28,7 +43,22 @@ class ObfuscationHook implements SingletonInterface
 
         /** @var ObfuscationService $service */
         $service = GeneralUtility::makeInstance(ObfuscationService::class);
-        $parameters['pObj']->content = $service->obfuscateContent($parameters['pObj']->content);
+
+        if (!isset($settings['obfuscateEmailLinks']) || boolval($settings['obfuscateEmailLinks'])) {
+            if (!isset($settings['patternEmailLinks']) || empty(trim($settings['patternEmailLinks']))) {
+                $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content);
+            } else {
+                $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content, $settings['patternEmailLinks']);
+            }
+        }
+
+        if (!isset($settings['obfuscatePlainEmails']) || boolval($settings['obfuscatePlainEmails'])) {
+            if (!isset($settings['patternPlainEmails']) || empty(trim($settings['patternPlainEmails']))) {
+                $parameters['pObj']->content = $service->obfuscatePlainEmails($parameters['pObj']->content);
+            } else {
+                $parameters['pObj']->content = $service->obfuscatePlainEmails($parameters['pObj']->content, $settings['patternPlainEmails']);
+            }
+        }
     }
 
     private static function isSpamProtectEmailAddressesEnabled()
