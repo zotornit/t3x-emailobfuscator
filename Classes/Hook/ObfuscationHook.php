@@ -10,12 +10,17 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ObfuscationHook implements SingletonInterface
 {
 
     public function obfuscatePageContent(&$parameters)
     {
+        if (!($parameters['pObj'] instanceof TypoScriptFrontendController)) {
+            return;
+        }
+
         /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
@@ -43,7 +48,6 @@ class ObfuscationHook implements SingletonInterface
 
         /** @var ObfuscationService $service */
         $service = GeneralUtility::makeInstance(ObfuscationService::class);
-
         if (!isset($settings['obfuscateEmailLinks']) || boolval($settings['obfuscateEmailLinks'])) {
             if (!isset($settings['patternEmailLinks']) || empty(trim($settings['patternEmailLinks']))) {
                 $parameters['pObj']->content = $service->obfuscateEmailLinks($parameters['pObj']->content);
