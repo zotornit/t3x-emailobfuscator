@@ -1,6 +1,6 @@
 <?php
 
-namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Hook;
+namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Unit\Hook;
 
 use EMAILOBFUSCATOR\Emailobfuscator\Hook\ObfuscationHook;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

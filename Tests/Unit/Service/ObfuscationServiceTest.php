@@ -1,6 +1,6 @@
 <?php
 
-namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Service;
+namespace EMAILOBFUSCATOR\Emailobfuscator\Tests\Unit\Service;
 
 
 use EMAILOBFUSCATOR\Emailobfuscator\Service\ObfuscationService;
