@@ -12,7 +12,7 @@ $EM_CONF['emailobfuscator'] = array(
 	'clearcacheonload' => 1,
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '8.7.0-10.5.99',
+			'typo3' => '8.7.0-10.4.99',
 		),
 		'conflicts' => array(
 		),
