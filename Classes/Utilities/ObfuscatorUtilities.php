@@ -80,7 +80,7 @@ class ObfuscatorUtilities
      */
     public static function obfuscateToJavaScript(string $string, float $weight = 0.7): string
     {
-        $output[] = '<script type="text/javascript">(function(p,u){for(i of u){document.write(p[i]);}})(';
+        $output[] = '<script type="text/javascript">(function(p,u){for(var i in u){document.write(p[u[i]]);}})(';
         $pieces = self::cutRandom(str_replace([PHP_EOL, "\r"], " ", $string));
         $goodIndexIterator = 0;
         $goodIndexes = [];
