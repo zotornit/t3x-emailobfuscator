@@ -69,6 +69,6 @@ class ObfuscationHook implements SingletonInterface
     {
         return isset($GLOBALS['TSFE']->config['config']['spamProtectEmailAddresses'])
             && is_numeric($GLOBALS['TSFE']->config['config']['spamProtectEmailAddresses'])
-            && $GLOBALS['TSFE']->config['config']['spamProtectEmailAddresses'] != 0;
+            && intval($GLOBALS['TSFE']->config['config']['spamProtectEmailAddresses']) !== 0;
     }
 }
