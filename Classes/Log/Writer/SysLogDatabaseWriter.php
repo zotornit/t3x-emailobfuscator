@@ -5,6 +5,7 @@ namespace EMAILOBFUSCATOR\Emailobfuscator\Log\Writer;
 
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Writer\DatabaseWriter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -34,7 +35,7 @@ class SysLogDatabaseWriter extends DatabaseWriter
             'request_id' => $record->getRequestId(),
             'time_micro' => $record->getCreated(),
             'component' => $record->getComponent(),
-            'level' => $record->getLevel(),
+            'level' => LogLevel::normalizeLevel($record->getLevel()),
             'message' => $record->getMessage(),
             'data' => $data,
 //            'userid' => 1,
