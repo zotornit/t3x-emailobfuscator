@@ -10,9 +10,9 @@ pipeline {
             steps {
                 echo "Building t3x-emailobfuscator:$TAG_NAME"
                 script {
-                    sh 'docker login -u $DOCKER_REPOSITORY_USR -p $DOCKER_REPOSITORY_PSW registry9.de:5000/zotornit-typo3-terupload:latest'
-                    sh 'docker pull registry9.de:5000/zotornit-typo3-terupload:latest'
-                    sh 'docker run -i --rm -v $PWD:/extension -e TER_ACCESS_TOKEN=$TER_ACCESS_TOKEN -e TAG_NAME=$TAG_NAME registry9.de:5000/zotornit-typo3-terupload:latest'
+                    sh 'docker login -u $DOCKER_REPOSITORY_USR -p $DOCKER_REPOSITORY_PSW registry9.de:5000/typo3-ter-upload:latest'
+                    sh 'docker pull registry9.de:5000/typo3-ter-upload:latest'
+                    sh 'docker run -i --rm -v $PWD:/extension -e TER_ACCESS_TOKEN=$TER_ACCESS_TOKEN -e TAG_NAME=$TAG_NAME registry9.de:5000/typo3-ter-upload:latest'
 
                 }
             }
