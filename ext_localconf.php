@@ -14,9 +14,11 @@ call_user_func(function() {
      * We need to hook into `end of frontend` to process the non-cached elements.
      * Seems comment `Hook for post-processing of page content cached/non-cached` for 'contentPostProc-all' in
      * `TypoScriptFrontendController` is not very accurate.
+     *
+     * THIS IS REPLACED SINCE TYPO3 11.5 with with `ObfuscationMiddleware`
      */
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['hook_eofe']['tx_emailobfuscator']
-        = \EMAILOBFUSCATOR\Emailobfuscator\Hook\ObfuscationHook::class . '->obfuscatePageContent';
+//    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_fe.php']['hook_eofe']['tx_emailobfuscator']
+//        = \EMAILOBFUSCATOR\Emailobfuscator\Hook\ObfuscationHook::class . '->obfuscatePageContent';
 
     $GLOBALS['TYPO3_CONF_VARS']['LOG']['EMAILOBFUSCATOR']['Emailobfuscator']['Hook']['ObfuscationHook']['writerConfiguration'] = [
         \TYPO3\CMS\Core\Log\LogLevel::WARNING => [
