@@ -9,11 +9,17 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ObfuscationHook implements SingletonInterface
 {
+
+    private $configurationManager;
+
+    public function __construct()
+    {
+        $this->configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
+    }
 
     public function obfuscatePageContent(&$parameters)
     {
@@ -21,10 +27,7 @@ class ObfuscationHook implements SingletonInterface
             return;
         }
 
-        /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
-        $settings = $configurationManager->getConfiguration(
+        $settings = $this->configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             'emailobfuscator' //extkey
         );
