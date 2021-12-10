@@ -8,11 +8,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
@@ -30,8 +30,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class ObfuscationMiddleware implements MiddlewareInterface
 {
 
-    /** @var ConfigurationManagerInterface  */
-    private $configurationManager;
     /** @var ObfuscationService  */
     private $obfuscationService;
     /**
@@ -41,7 +39,6 @@ class ObfuscationMiddleware implements MiddlewareInterface
 
     public function __construct()
     {
-        $this->configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
         $this->obfuscationService = GeneralUtility::makeInstance(ObfuscationService::class);
         $this->timeTracker = GeneralUtility::makeInstance(TimeTracker::class);
     }
@@ -50,8 +47,10 @@ class ObfuscationMiddleware implements MiddlewareInterface
     {
 
 
-
-        $settings = $this->configurationManager->getConfiguration(
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
+        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
+        $settings = $configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             'emailobfuscator' //extkey
         );

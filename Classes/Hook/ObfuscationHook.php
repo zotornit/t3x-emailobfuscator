@@ -5,26 +5,26 @@ namespace EMAILOBFUSCATOR\Emailobfuscator\Hook;
 
 
 use EMAILOBFUSCATOR\Emailobfuscator\Service\ObfuscationService;
-use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ObfuscationHook implements SingletonInterface
 {
 
-    private $configurationManager;
-
     public function obfuscatePageContent(&$parameters)
     {
-        $this->configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
         if (!($parameters['pObj'] instanceof TypoScriptFrontendController)) {
             return;
         }
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
+        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
 
-        $settings = $this->configurationManager->getConfiguration(
+        $settings = $configurationManager->getConfiguration(
             \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
             'emailobfuscator' //extkey
         );
