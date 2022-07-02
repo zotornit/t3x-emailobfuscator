@@ -41,14 +41,14 @@
     "bin-dir": ".Build/bin"
   },
   "require-dev": {
-    "typo3/cms-core": "^9.5",
-    "typo3/cms-frontend": "^9.5",
-    "typo3/cms-install": "^9.5",
-    "typo3/cms-about": "^9.5",
+    "typo3/cms-core": "^10.4",
+    "typo3/cms-frontend": "^10.4",
+    "typo3/cms-install": "^10.4",
+    "typo3/cms-about": "^10.4",
     "typo3/testing-framework": "^4.11.0"
   },
   "require": {
-    "typo3/cms-core": "^8.7 || ^9.5 || ^10.4"
+    "typo3/cms-core": "^10.4 || ^11.5"
   },
   "scripts": {
     "post-autoload-dump": [
