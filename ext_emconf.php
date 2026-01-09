@@ -7,12 +7,12 @@ $EM_CONF['emailobfuscator'] = array(
 	'author' => 'Thomas Pronold',
 	'author_email' => 'tp@zotorn.de',
 	'author_company' => 'Zotorn IT | zotorn.de',
-	'version' => '6.1.2',
+	'version' => '6.2.0-dev',
 	'state' => 'beta',
 	'clearcacheonload' => 1,
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '10.4.0-11.5.99',
+			'typo3' => '10.4.0-13.4.99',
 		),
 		'conflicts' => array(
 		),

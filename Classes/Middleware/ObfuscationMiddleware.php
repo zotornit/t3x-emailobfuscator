@@ -8,7 +8,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\Stream;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -45,15 +47,37 @@ class ObfuscationMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $settings = [];
+        $versionInformation = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($versionInformation->getMajorVersion() < 12) {
+            // < v12
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
+            $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
+            $settings = $configurationManager->getConfiguration(
+                \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+                'emailobfuscator' //extkey
+            );
+        } if ($versionInformation->getMajorVersion() < 13) {
+            // v12
+            $configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
+            $settings = $configurationManager->getConfiguration(
+                \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+                'emailobfuscator' //extkey
+            );
+        } else {
+            // >= v13
+            /** Using $configurationManager->getConfiguration results in exception:
+             * "Setup array has not been initialized. This happens in cached Frontend scope where full TypoScript is not needed by the system."
+             * @see https://docs.typo3.org/m/typo3/reference-exceptions/main/en-us/Exceptions/1666513645.html
+             */
+            $frontendTypoScript = $request->getAttribute('frontend.typoscript');
+            if ($frontendTypoScript->hasSetup()) {
+                $fullTypoScript = $frontendTypoScript->getSetupArray();
+                $settings = $fullTypoScript['plugin.']['tx_emailobfuscator.']['settings.'] ?? [];
+            }
+        }
 
-
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager */
-        $configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
-        $settings = $configurationManager->getConfiguration(
-            \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
-            'emailobfuscator' //extkey
-        );
 
         // return when, disabled
         if (!isset($settings['enabled']) || !boolval($settings['enabled'])) {
